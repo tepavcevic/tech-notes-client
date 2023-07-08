@@ -1,0 +1,421 @@
+@import './custom/variables';
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: $sm,
+  md: $md,
+  lg: $lg,
+  xl: $xl,
+  xxl: $xxl,
+);
+
+$container-max-widths: (
+  sm: $sm,
+  md: $cmw-md,
+  lg: $cmw-lg,
+  xl: $cmw-xl,
+  xxl: $cmw-xxl,
+);
+
+$primary: $f-black;
+$danger: $f-primary;
+
+@import '../../node_modules/bootstrap/scss/bootstrap';
+
+.btn {
+  &.btn-primary {
+    border-radius: $btn-border-radius;
+    border-color: $f-black;
+    color: $white;
+    background-color: $f-black;
+
+    &:hover {
+      color: $f-black;
+      background-color: $f-cool-gray-300;
+    }
+
+    &:focus {
+      border-color: $f-cool-gray;
+      background-color: $f-cool-gray;
+    }
+
+    &:disabled {
+      border-color: $f-cool-gray-200;
+      background-color: $f-cool-gray-200;
+    }
+
+    &.active {
+      color: $f-black;
+      background-color: $f-cool-gray-300;
+    }
+  }
+
+  &.btn-sm {
+    font-size: $btn-font-size-sm;
+    padding: $btn-padding-y-sm $btn-padding-x-sm;
+  }
+
+  &.btn-outline {
+    border-radius: $btn-border-radius;
+    border: $btn-border-width solid $f-black;
+    color: $f-black;
+    background-color: transparent;
+
+    &:hover {
+      background-color: transparent;
+      border: $btn-border-width solid $f-primary;
+      color: $f-primary;
+    }
+
+    &:focus {
+      border: $btn-border-width solid $f-cool-gray;
+      color: $f-cool-gray;
+    }
+
+    &:disabled {
+      border: $btn-border-width solid $f-cool-gray-200;
+      color: $f-cool-gray-200;
+    }
+    &.active {
+      border: $btn-border-width solid $f-primary;
+      color: $f-primary;
+    }
+  }
+}
+
+//typography
+
+.display-1 {
+  font-size: $font-size-36;
+  line-height: $line-height-110;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-only(md) {
+    font-size: $font-size-48;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-56;
+  }
+}
+
+.display-2 {
+  font-size: $font-size-30;
+  line-height: $line-height-120;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-only(md) {
+    font-size: $font-size-40;
+    line-height: $line-height-110;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-48;
+    line-height: $line-height-110;
+  }
+}
+
+.heading-1 {
+  font-size: $font-size-30;
+  line-height: $line-height-120;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-only(md) {
+    font-size: $font-size-34;
+    line-height: $line-height-115;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-40;
+    line-height: $line-height-110;
+  }
+}
+
+.heading-2 {
+  font-size: $font-size-24;
+  line-height: $line-height-140;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-only(md) {
+    font-size: $font-size-28;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-34;
+    line-height: $line-height-130;
+  }
+}
+
+.heading-3 {
+  font-size: $font-size-22;
+  line-height: $line-height-130;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-only(md) {
+    font-size: $font-size-24;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-28;
+  }
+}
+
+.heading-4 {
+  font-size: $font-size-20;
+  line-height: $line-height-130;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-22;
+  }
+}
+
+.heading-5 {
+  font-size: $font-size-18;
+  line-height: $line-height-130;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-only(md) {
+    font-size: $font-size-18;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-18;
+  }
+}
+
+.heading-6 {
+  font-size: $font-size-16;
+  line-height: $line-height-130;
+  font-weight: $font-weight-500;
+
+  @include media-breakpoint-only(md) {
+    font-size: $font-size-16;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-16;
+  }
+}
+
+.paragraph-1 {
+  font-size: $font-size-20;
+  line-height: $line-height-150;
+  font-weight: $font-weight-450;
+}
+
+.paragraph-2 {
+  font-size: $font-size-18;
+  line-height: $line-height-150;
+  font-weight: $font-weight-450;
+}
+
+.paragraph-3 {
+  font-size: $font-size-16;
+  line-height: $line-height-150;
+  font-weight: $font-weight-450;
+}
+
+.paragraph-4 {
+  font-size: $font-size-14;
+  line-height: $line-height-150;
+  font-weight: $font-weight-450;
+}
+
+.paragraph-5 {
+  font-size: $font-size-12;
+  line-height: $line-height-150;
+  font-weight: $font-weight-450;
+}
+
+.bold {
+  font-weight: $font-weight-700;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.alert-text {
+  @extend .paragraph-3;
+
+  @include media-breakpoint-up(lg) {
+    font-size: $font-size-18;
+  }
+}
+
+//non-clickable buttons
+
+.non-clickable-btn {
+  font-size: $font-size-12;
+  line-height: $line-height-150;
+  background-color: transparent;
+  padding: $space-2 $space-8;
+}
+
+//logo
+
+.logo {
+  height: 40px;
+  width: 79px;
+
+  @include media-breakpoint-up(sm) {
+    height: 55px;
+    width: 108px;
+  }
+}
+
+//margin-x for header
+
+.px-header {
+  padding: 17px 0;
+  z-index: 100;
+}
+
+//alert positioning
+
+.alert {
+  z-index: 1;
+}
+
+.top-115 {
+  top: 115px;
+}
+
+//language dropdown width
+
+.dropdown-menu {
+  min-width: inherit;
+}
+
+//button link
+
+.btn-link {
+  color: $f-black;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: $f-primary;
+  }
+}
+
+//search box (all screens)
+
+@mixin box-size {
+  height: 56px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin box-border {
+  border: 2px solid $f-black;
+  padding: 0 15px;
+}
+
+@mixin box-input {
+  width: 240px;
+  padding: 0 6px;
+}
+
+.outline {
+  @include box-border;
+
+  .search-label {
+    display: none;
+  }
+}
+
+.header-group {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-100%, -50%);
+}
+
+.search-box {
+  @include box-size;
+
+  &.search-input:focus,
+  .search-input:not(:placeholder-shown) {
+    @include box-input;
+  }
+
+  &.search-box:hover,
+  &.search-box:focus-within {
+    @extend .outline;
+
+    .search-input {
+      @include box-input;
+    }
+  }
+}
+
+.search-box-drawer {
+  @include box-size;
+  @extend .outline;
+
+  .search-input {
+    @include box-input;
+    width: 200px;
+  }
+
+  &.search-input:focus,
+  &.search-input:not(:placeholder-shown) {
+    @include box-input;
+    width: 200px;
+  }
+}
+
+.search-input {
+  outline: none;
+  border: none;
+  background: none;
+  width: 0;
+  padding: 0;
+  float: left;
+  font-size: $font-size-18;
+  transition: 0.3s;
+  line-height: 40px;
+}
+
+.search-btn {
+  position: relative;
+  float: right;
+  transition: 0.3s;
+}
+
+.search-label {
+  font-size: $font-size-20;
+  line-height: $line-height-110;
+  transition: 0.3s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .loading {
+    animation: loading-spin infinite 1.5s linear;
+  }
+}
+
+@keyframes loading-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.card-overlay {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.6);
+  width: 95%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}

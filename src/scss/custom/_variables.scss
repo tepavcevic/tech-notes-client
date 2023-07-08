@@ -1,0 +1,133 @@
+//breakpoints and grid margins
+
+$sm: 368px;
+$md: 768px;
+$lg: 1024px;
+$xl: 1440px;
+$xxl: 1600px;
+
+$cmw-sm: 320px;
+$cmw-md: 666px;
+$cmw-lg: 894px;
+$cmw-xl: 1170px;
+$cmw-xxl: 1330px;
+
+//colors
+
+$f-black: #171717;
+$f-black-100: #515151;
+$f-black-200: #8b8b8b;
+$f-black-300: #c5c5c5;
+$f-black-400: #f3f3f3;
+
+$f-primary: #df2900;
+$f-primary-100: #e75f40;
+$f-primary-200: #ef9480;
+$f-primary-300: #f7c9bf;
+
+$f-success: #27ae60;
+$f-success-100: #78ca78;
+$f-success-200: #a5dba5;
+$f-success-300: #d2edd2;
+
+$f-error: #c72619;
+$f-error-100: #d55c53;
+$f-error-200: #e3928c;
+$f-error-300: #f1c9c6;
+
+$f-accent1: #96dde8;
+$f-accent1-100: #91dbe7;
+$f-accent1-200: #b6e7ef;
+$f-accent1-300: #daf3f7;
+
+$f-accent2: #b6e82e;
+$f-accent2-100: #c8e262;
+$f-accent2-200: #dbeb96;
+$f-accent2-300: #edf5cb;
+
+$f-accent3: #a99e83;
+$f-accent3-100: #cfc8b9;
+$f-accent3-200: #e9e7e0;
+$f-accent3-300: #f9f9f7;
+
+$f-warning: #f2994a;
+$f-warning-100: #f7c699;
+$f-warning-200: #fce5d1;
+$f-warning-300: #fef9f4;
+
+$f-cool-gray: #53565a;
+$f-cool-gray-100: #7e8083;
+$f-cool-gray-200: #a8aaac;
+$f-cool-gray-300: #f6f7f7;
+
+$white: #ffffff;
+
+//button attributes
+
+$btn-padding-y: 14px;
+$btn-padding-x: 20px;
+$btn-font-size: 18px;
+$btn-font-weight: 500;
+$btn-line-height: 22px;
+$btn-border-radius: 0;
+$btn-border-width: 2px;
+$btn-box-shadow: none;
+$btn-font-size-sm: 16px;
+$btn-line-height-sm: 20.24px;
+$btn-padding-y-sm: 10px;
+$btn-padding-x-sm: 18px;
+$btn-border-radius-sm: 0;
+
+//typography
+
+$font-size-56: 56px;
+$font-size-48: 48px;
+$font-size-40: 40px;
+$font-size-36: 36px;
+$font-size-34: 34px;
+$font-size-30: 30px;
+$font-size-28: 28px;
+$font-size-24: 24px;
+$font-size-22: 22px;
+$font-size-20: 20px;
+$font-size-18: 18px;
+$font-size-16: 16px;
+$font-size-14: 14px;
+$font-size-12: 12px;
+
+$line-height-155: 155%;
+$line-height-150: 150%;
+$line-height-140: 140%;
+$line-height-130: 130%;
+$line-height-120: 120%;
+$line-height-115: 115%;
+$line-height-110: 110%;
+
+$font-weight-700: 700;
+$font-weight-500: 500;
+$font-weight-450: 450;
+
+//spacers
+
+$space-2: 2px;
+$space-5: 5px;
+$space-7: 7px;
+$space-8: 8px;
+$space-12: 12px;
+$space-15: 15px;
+$space-17: 17px;
+$space-20: 20px;
+$space-25: 25px;
+$space-30: 30px;
+$space-35: 35px;
+$space-40: 40px;
+$space-50: 50px;
+$space-60: 60px;
+$space-65: 65px;
+$space-70: 70px;
+$space-80: 80px;
+$space-90: 90px;
+$space-100: 100px;
+$space-120: 120px;
+$space-140: 140px;
+$space-160: 160px;
