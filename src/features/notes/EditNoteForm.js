@@ -1,24 +1,25 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { TrashIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
+
 import { useDeleteNoteMutation, useUpdateNoteMutation } from './notesApiSlice';
-import { useNavigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
 
 export default function EditNoteForm({ note, users }) {
   const [title, setTitle] = useState(note?.title);
   const [text, setText] = useState(note?.text);
   const [assignedUser, setAssignedUser] = useState(note?.user);
   const [completed, setCompleted] = useState(note?.completed);
-
   const navigate = useNavigate();
-
   const [updateNote, { isLoading, isSuccess, isError, error }] =
     useUpdateNoteMutation();
   const [
     deleteNote,
     { isSuccess: isDelSuccess, isError: isDelError, error: delError },
   ] = useDeleteNoteMutation();
+  const { isManager, isAdmin } = useAuth();
 
   const created = new Date(note?.createdAt).toLocaleString('en-UK', {
     day: 'numeric',
@@ -166,15 +167,17 @@ export default function EditNoteForm({ note, users }) {
             Submit
           </Button>
 
-          <Button
-            variant="danger"
-            type="submit"
-            className="d-flex align-items-center gap-2"
-            onClick={handleDeleteNote}
-          >
-            <TrashIcon height={18} width={18} />
-            Delete
-          </Button>
+          {(isManager || isAdmin) && (
+            <Button
+              variant="danger"
+              type="submit"
+              className="d-flex align-items-center gap-2"
+              onClick={handleDeleteNote}
+            >
+              <TrashIcon height={18} width={18} />
+              Delete
+            </Button>
+          )}
         </div>
       </Form>
     </>

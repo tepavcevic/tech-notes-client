@@ -1,5 +1,6 @@
 import { useGetNotesQuery } from './notesApiSlice';
 import Note from './Note';
+import useAuth from '../../hooks/useAuth';
 
 export default function NotesList() {
   const {
@@ -8,11 +9,18 @@ export default function NotesList() {
     isSuccess,
     isError,
     error,
-  } = useGetNotesQuery(null, {
+  } = useGetNotesQuery('notesList', {
     pollingInterval: 150000,
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
   });
+  const { username, isManager, isAdmin } = useAuth();
+  const filteredIds =
+    isAdmin || isManager
+      ? notes?.ids
+      : notes?.ids?.filter(
+          (noteId) => notes?.entities[noteId].username === username
+        );
 
   return (
     <>
@@ -33,8 +41,8 @@ export default function NotesList() {
         </thead>
         <tbody>
           {isSuccess &&
-            !!notes?.ids.length &&
-            notes?.ids.map((noteId) => <Note key={noteId} noteId={noteId} />)}
+            notes?.ids.length > 0 &&
+            filteredIds?.map((noteId) => <Note key={noteId} noteId={noteId} />)}
         </tbody>
       </table>
     </>

@@ -10,7 +10,7 @@ export default function Public() {
       </header>
       <main
         className="d-flex flex-column justify-content-start align-items-start"
-        style={{ height: '70vh' }}
+        style={{ height: '90vh' }}
       >
         <p>
           Located in Beautiful Downtown Foo City, Dan D. Repairs provides a

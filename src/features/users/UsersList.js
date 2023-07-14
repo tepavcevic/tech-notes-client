@@ -8,7 +8,7 @@ export default function UsersList() {
     isSuccess,
     isError,
     error,
-  } = useGetUsersQuery(null, {
+  } = useGetUsersQuery('usersList', {
     pollingInterval: 60000,
     refetchOnFocus: true,
     refetchOnMountOrArgChange: true,
@@ -29,7 +29,7 @@ export default function UsersList() {
         </thead>
         <tbody>
           {isSuccess &&
-            !!users?.ids.length &&
+            users?.ids.length > 0 &&
             users.ids.map((userId) => <User key={userId} userId={userId} />)}
         </tbody>
       </table>
