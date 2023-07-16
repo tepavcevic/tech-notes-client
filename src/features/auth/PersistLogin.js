@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import PulseLoader from 'react-spinners/PulseLoader';
 
 import usePersist from '../../hooks/usePersist';
 import { selectCurrentToken } from './authSlice';
@@ -19,12 +20,10 @@ export default function PersistLogin() {
   useEffect(() => {
     if (effectRan.current === true || process.env.NODE_ENV !== 'development') {
       const verifyRefreshToken = async () => {
-        console.log('verifying refresh token');
         try {
           await refresh();
           setTrueSuccess(true);
         } catch (error) {
-          console.log(error);
           //silent fail
         }
       };
@@ -49,7 +48,7 @@ export default function PersistLogin() {
         </Link>
       )}
       {!persist && token && <Outlet />}
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <PulseLoader />}
       {persist && isSuccess && trueSuccess && <Outlet />}
       {persist && token && isUninitialized && <Outlet />}
     </>

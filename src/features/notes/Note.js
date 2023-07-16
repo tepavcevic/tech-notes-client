@@ -1,12 +1,17 @@
-import { useSelector } from 'react-redux';
+import { memo } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
-import { selectNoteById } from './notesApiSlice';
+import { useGetNotesQuery } from './notesApiSlice';
 
-export default function Note({ noteId }) {
+const MemoNote = memo(function Note({ noteId }) {
   const navigate = useNavigate();
-  const note = useSelector((state) => selectNoteById(state, noteId));
+  const { note } = useGetNotesQuery('notesList', {
+    selectFromResult: ({ data }) => ({
+      note: data?.entities[noteId],
+    }),
+  });
 
   const created = new Date(note?.createdAt).toLocaleString('en-UK', {
     day: 'numeric',
@@ -45,4 +50,6 @@ export default function Note({ noteId }) {
       )}
     </tr>
   );
-}
+});
+
+export default MemoNote;

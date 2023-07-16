@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 export default function NewNoteForm({ users }) {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
-  const [assignedUser, setAssignedUser] = useState(users[0]?.username);
+  const [assignedUser, setAssignedUser] = useState(users[0]?.id);
 
   const navigate = useNavigate();
 

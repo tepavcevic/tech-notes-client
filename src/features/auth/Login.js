@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import PulseLoader from 'react-spinners/PulseLoader';
 
 import { setCredentials } from './authSlice';
 import { useLoginMutation } from './authApiSlice';
@@ -58,7 +59,7 @@ export default function Login() {
 
   return (
     <>
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <PulseLoader />}
       {!isLoading && (
         <section>
           <header>

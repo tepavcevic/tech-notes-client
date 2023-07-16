@@ -7,6 +7,7 @@ import {
   UserPlusIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
+import PulseLoader from 'react-spinners/PulseLoader';
 
 import { useSendLogoutMutation } from '../features/auth/authApiSlice';
 import useAuth from '../hooks/useAuth';
@@ -26,7 +27,7 @@ export default function DashHeader() {
 
   return (
     <>
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <PulseLoader />}
       {isError && (
         <div className="text-danger">Error: {error?.data?.message}</div>
       )}

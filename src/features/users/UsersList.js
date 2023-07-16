@@ -1,3 +1,5 @@
+import PulseLoader from 'react-spinners/PulseLoader';
+
 import { useGetUsersQuery } from './usersApiSlice';
 import User from './User';
 
@@ -16,7 +18,7 @@ export default function UsersList() {
   return (
     <>
       <h1 className="my-5">Users List</h1>
-      {isLoading && <div>Loading...</div>}
+      {isLoading && <PulseLoader />}
       {isError && error?.data?.message}
 
       <table className="w-100 w-lg-75 p-4 mx-auto rounded-4 text-start">

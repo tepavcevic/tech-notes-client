@@ -4,10 +4,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { TrashIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
 
+import useTitle from '../../hooks/useTitle';
 import { useDeleteNoteMutation, useUpdateNoteMutation } from './notesApiSlice';
 import useAuth from '../../hooks/useAuth';
 
 export default function EditNoteForm({ note, users }) {
+  useTitle('Edit note');
   const [title, setTitle] = useState(note?.title);
   const [text, setText] = useState(note?.text);
   const [assignedUser, setAssignedUser] = useState(note?.user);
