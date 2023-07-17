@@ -220,56 +220,37 @@ body {
   cursor: pointer;
 }
 
-.alert-text {
-  @extend .paragraph-3;
-
-  @include media-breakpoint-up(lg) {
-    font-size: $font-size-18;
-  }
-}
-
-//non-clickable buttons
-
-.non-clickable-btn {
-  font-size: $font-size-12;
-  line-height: $line-height-150;
-  background-color: transparent;
-  padding: $space-2 $space-8;
-}
-
-//logo
-
-.logo {
-  height: 40px;
-  width: 79px;
-
-  @include media-breakpoint-up(sm) {
-    height: 55px;
-    width: 108px;
-  }
-}
-
-//margin-x for header
+//styles for header
 
 .px-header {
-  padding: 17px 0;
+  height: $header-height;
+  padding: 28px 0;
   z-index: 100;
+
+  @include media-breakpoint-up(lg) {
+    padding: 12px 0;
+  }
 }
 
-//alert positioning
+.offcanvas-nav {
+  max-width: 290px;
 
-.alert {
-  z-index: 1;
+  @include media-breakpoint-up(lg) {
+    max-width: none;
+  }
 }
 
-.top-115 {
-  top: 115px;
+.px-footer {
+  height: $footer-height;
 }
 
-//language dropdown width
+.main-content {
+  min-height: calc(100vh - $header-height - $footer-height);
+  overflow-y: auto;
+}
 
-.dropdown-menu {
-  min-width: inherit;
+.content-max-width {
+  max-width: $content-max-width;
 }
 
 //button link

@@ -1,10 +1,17 @@
+import { useState } from 'react';
 import PulseLoader from 'react-spinners/PulseLoader';
 
+import useAuth from '../../hooks/useAuth';
+import useTitle from '../../hooks/useTitle';
 import { useGetNotesQuery } from './notesApiSlice';
 import Note from './Note';
-import useAuth from '../../hooks/useAuth';
+import BackButton from '../../components/BackButton';
+import ViewNoteModal from '../../components/ViewNoteModal';
 
 export default function NotesList() {
+  const [note, setNote] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  useTitle('Notes list');
   const {
     data: notes,
     isLoading,
@@ -24,27 +31,44 @@ export default function NotesList() {
           (noteId) => notes?.entities[noteId].username === username
         );
 
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
   return (
     <>
-      <h1 className="my-5">Notes List</h1>
+      <BackButton url="/dash" />
+      <h1 className="mb-5">Notes List</h1>
       {isLoading && <PulseLoader />}
       {isError && error?.data?.message}
 
-      <table className="w-100 w-lg-75 p-4 mx-auto rounded-4 text-start">
+      <ViewNoteModal
+        note={note}
+        show={showModal}
+        handleClose={handleCloseModal}
+      />
+
+      <table className="w-100 w-lg-75 content-max-width p-4 mx-auto rounded-4 text-start">
         <thead>
-          <tr className="row py-2 bg-light rounded-top shadow-md">
-            <th className="col">Username</th>
+          <tr className="row g-2 p-2 bg-light rounded-top shadow-md">
+            <th className="col-2">Status</th>
             <th className="col d-none d-md-inline">Created</th>
             <th className="col d-none d-md-inline">Updated</th>
             <th className="col">Title</th>
             <th className="col d-none d-md-inline">Owner</th>
-            <th className="col">Edit</th>
+            <th className="col-1">Edit</th>
           </tr>
         </thead>
         <tbody>
           {isSuccess &&
             notes?.ids.length > 0 &&
-            filteredIds?.map((noteId) => <Note key={noteId} noteId={noteId} />)}
+            filteredIds?.map((noteId) => (
+              <Note
+                key={noteId}
+                setNote={setNote}
+                noteId={noteId}
+                showModal={handleShowModal}
+              />
+            ))}
         </tbody>
       </table>
     </>

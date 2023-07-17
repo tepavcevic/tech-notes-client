@@ -5,7 +5,7 @@ import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
 import { useGetNotesQuery } from './notesApiSlice';
 
-const MemoNote = memo(function Note({ noteId }) {
+const MemoNote = memo(function Note({ noteId, setNote, showModal }) {
   const navigate = useNavigate();
   const { note } = useGetNotesQuery('notesList', {
     selectFromResult: ({ data }) => ({
@@ -24,12 +24,18 @@ const MemoNote = memo(function Note({ noteId }) {
   });
 
   return (
-    <tr className={`row p-2 border-top bg-light rounded`}>
+    <tr
+      className="row p-2 border-top bg-light rounded cursor-pointer"
+      onClick={() => {
+        setNote(note);
+        showModal();
+      }}
+    >
       {note && (
         <>
-          <td className="col">
+          <td className="col-2">
             {note?.completed ? (
-              <span className="text-success">Completed</span>
+              <span className="text-success">Done</span>
             ) : (
               <span className="text-danger">Open</span>
             )}
@@ -38,7 +44,7 @@ const MemoNote = memo(function Note({ noteId }) {
           <td className="col d-none d-md-inline">{updated}</td>
           <td className="col">{note?.title}</td>
           <td className="col d-none d-md-inline">{note?.username}</td>
-          <td className="col">
+          <td className="col-1">
             <PencilSquareIcon
               role="button"
               height={20}

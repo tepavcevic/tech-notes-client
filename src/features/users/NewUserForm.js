@@ -4,13 +4,16 @@ import { UserPlusIcon } from '@heroicons/react/24/outline';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
+import useTitle from '../../hooks/useTitle';
 import { useAddNewUserMutation } from './usersApiSlice';
 import { ROLES } from '../../config/roles';
+import BackButton from '../../components/BackButton';
 
 const USER_REGEX = /^[A-z]{3,20}$/;
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
 
 export default function NewUserForm() {
+  useTitle('New user');
   const [username, setUsername] = useState('');
   const [validUsername, setValidUsername] = useState(false);
   const [password, setPassword] = useState('');
@@ -62,7 +65,8 @@ export default function NewUserForm() {
 
   return (
     <>
-      <h1>Add New User</h1>
+      <BackButton url="/dash/users" />
+      <h1 className="mb-5">Add New User</h1>
 
       <p className="text-danger">{error?.data?.message}</p>
 
@@ -72,10 +76,13 @@ export default function NewUserForm() {
           <Form.Control
             name="username"
             type="text"
+            minLength={3}
+            maxLength={20}
             placeholder="Enter username"
             value={username}
             onChange={handleUsernameChange}
             autoComplete="off"
+            isInvalid={isError}
           />
           <Form.Text className="text-muted">3-20 letters</Form.Text>
         </Form.Group>
@@ -85,10 +92,13 @@ export default function NewUserForm() {
           <Form.Control
             name="password"
             type="text"
+            minLength={4}
+            maxLength={20}
             placeholder="Enter password"
             value={password}
             onChange={handlePasswordChange}
             autoComplete="off"
+            isInvalid={isError}
           />
           <Form.Text className="text-muted">
             4-20 characters including!@#$%
@@ -106,19 +116,22 @@ export default function NewUserForm() {
               label={role}
               onChange={handleRolesChange}
               checked={roles.includes(role)}
+              isInvalid={isError}
             />
           ))}
         </Form.Group>
 
-        <Button
-          variant="primary"
-          type="submit"
-          className="d-flex align-items-center gap-2"
-          disabled={!canSave}
-        >
-          <UserPlusIcon height={18} width={18} />
-          Submit
-        </Button>
+        <div className="d-flex justify-content-end">
+          <Button
+            variant="primary"
+            type="submit"
+            className="d-flex align-items-center gap-2"
+            disabled={!canSave}
+          >
+            <UserPlusIcon height={18} width={18} />
+            Submit
+          </Button>
+        </div>
       </Form>
     </>
   );

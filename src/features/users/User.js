@@ -21,9 +21,9 @@ const MemoUser = memo(function User({ userId }) {
     >
       {user && (
         <>
-          <td className="col-4">{user.username}</td>
-          <td className="col-5">{userRoles}</td>
-          <td className="col-3">
+          <td className="col">{user.username}</td>
+          <td className="col">{userRoles}</td>
+          <td className="col-2">
             <PencilSquareIcon
               role="button"
               height={20}

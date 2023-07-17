@@ -2,18 +2,20 @@ import { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { DocumentPlusIcon } from '@heroicons/react/24/outline';
-import { useAddNewNoteMutation } from './notesApiSlice';
 import { useNavigate } from 'react-router-dom';
 
+import useTitle from '../../hooks/useTitle';
+import { useAddNewNoteMutation } from './notesApiSlice';
+
 export default function NewNoteForm({ users }) {
+  useTitle('New note');
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [assignedUser, setAssignedUser] = useState(users[0]?.id);
 
   const navigate = useNavigate();
 
-  const [addNewNote, { isLoading, isSuccess, isError, error }] =
-    useAddNewNoteMutation();
+  const [addNewNote, { isLoading, isSuccess, error }] = useAddNewNoteMutation();
 
   useEffect(() => {
     if (isSuccess) {
@@ -49,19 +51,20 @@ export default function NewNoteForm({ users }) {
 
       <p className="text-danger">{error?.data?.message ?? ''}</p>
 
-      <Form className="text-start">
+      <Form className="content-max-width text-start mx-auto">
         <Form.Group className="mb-3" controlId="title">
           <Form.Label className="fw-bolder">Title</Form.Label>
           <Form.Control
             name="title"
             type="text"
+            maxLength={80}
             placeholder="Enter title"
             value={title}
             onChange={handleTitleChange}
             autoComplete="off"
           />
           <Form.Text className="text-muted">
-            Every note should have a unique title
+            Every note should have a unique title, no longer than 80 characters
           </Form.Text>
         </Form.Group>
 
@@ -70,6 +73,7 @@ export default function NewNoteForm({ users }) {
           <Form.Control
             name="text"
             as="textarea"
+            maxLength={800}
             style={{ height: 150 }}
             placeholder="Enter text"
             value={text}
@@ -96,16 +100,18 @@ export default function NewNoteForm({ users }) {
           </Form.Text>
         </Form.Group>
 
-        <Button
-          variant="primary"
-          type="submit"
-          className="d-flex align-items-center gap-2"
-          onClick={handleSaveNote}
-          disabled={!canSave}
-        >
-          <DocumentPlusIcon height={18} width={18} />
-          Submit
-        </Button>
+        <div className="d-flex justify-content-end">
+          <Button
+            variant="primary"
+            type="submit"
+            className="d-flex align-items-center gap-2"
+            onClick={handleSaveNote}
+            disabled={!canSave}
+          >
+            <DocumentPlusIcon height={18} width={18} />
+            Submit
+          </Button>
+        </div>
       </Form>
     </>
   );

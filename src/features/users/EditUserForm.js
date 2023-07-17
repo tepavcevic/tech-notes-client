@@ -4,25 +4,26 @@ import { UserPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
+import useTitle from '../../hooks/useTitle';
 import { useUpdateUserMutation, useDeleteUserMutation } from './usersApiSlice';
 import { ROLES } from '../../config/roles';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const USER_REGEX = /^[A-z]{3,20}$/;
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
 
 export default function EditUserForm({ user }) {
+  useTitle('Edit user');
   const [username, setUsername] = useState(user.username);
   const [validUsername, setValidUsername] = useState(false);
   const [password, setPassword] = useState('');
   const [validPassword, setValidPassword] = useState(false);
   const [roles, setRoles] = useState(user.roles);
   const [active, setActive] = useState(user.active);
-  const [updateUser, { isLoading, isSuccess, isError, error }] =
-    useUpdateUserMutation();
-  const [
-    deleteUser,
-    { isSuccess: isDelSuccess, isError: isDelError, error: delError },
-  ] = useDeleteUserMutation();
+  const [updateUser, { isLoading, isSuccess, error }] = useUpdateUserMutation();
+  const [deleteUser, { isSuccess: isDelSuccess, error: delError }] =
+    useDeleteUserMutation();
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,6 +62,11 @@ export default function EditUserForm({ user }) {
     setRoles((prev) => [...prev, event.target.value]);
   };
   const handleActiveChange = (event) => setActive(event.target.checked);
+  const handleCloseModal = () => setShowModal(false);
+  const handleShowModal = (event) => {
+    event.preventDefault();
+    setShowModal(true);
+  };
 
   const handleSaveUser = async (event) => {
     event.preventDefault();
@@ -82,6 +88,7 @@ export default function EditUserForm({ user }) {
     event.preventDefault();
 
     deleteUser({ id: user.id });
+    handleCloseModal();
   };
 
   const canSave = password
@@ -90,6 +97,12 @@ export default function EditUserForm({ user }) {
 
   return (
     <>
+      <ConfirmModal
+        show={showModal}
+        handleDelete={handleDeleteUser}
+        message="Are You sure You want to delete this user?"
+        handleClose={handleCloseModal}
+      />
       <h1 className="mb-5">Edit User</h1>
 
       <p className="text-danger">
@@ -168,7 +181,7 @@ export default function EditUserForm({ user }) {
             variant="danger"
             type="submit"
             className="d-flex align-items-center gap-2"
-            onClick={handleDeleteUser}
+            onClick={handleShowModal}
           >
             <TrashIcon height={18} width={18} />
             Delete

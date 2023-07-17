@@ -10,7 +10,7 @@ export default function DashFooter() {
   const { username, status } = useAuth();
 
   return (
-    <footer className="d-flex flex-column flex-sm-row align-items-center gap-3 gap-lg-5 py-5 px-4 bg-light">
+    <footer className="px-footer d-flex flex-column flex-sm-row align-items-center gap-3 gap-lg-5 py-5 px-4 bg-light">
       {pathname !== '/dash' ? (
         <Button
           className="btn btn-sm btn-outline d-flex align-items-center gap-2"

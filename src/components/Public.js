@@ -2,15 +2,15 @@ import { Link } from 'react-router-dom';
 
 export default function Public() {
   return (
-    <section className="text-start p-2 p-md-5">
-      <header className="my-5">
+    <section className="text-start d-flex flex-column">
+      <header className="my-5 px-2 px-md-5">
         <h1>
           Welcome to <span className="nowrap">Dan D. Repairs!</span>
         </h1>
       </header>
       <main
-        className="d-flex flex-column justify-content-start align-items-start"
-        style={{ height: '90vh' }}
+        className="d-flex flex-column justify-content-start px-2 px-md-5 align-items-start"
+        style={{ minHeight: 'calc(100vh - 146px - 123px)' }}
       >
         <p>
           Located in Beautiful Downtown Foo City, Dan D. Repairs provides a
@@ -28,8 +28,10 @@ export default function Public() {
         <br />
         <p>Owner: Dan Davidson</p>
       </main>
-      <footer>
-        <Link to="/login">Employee Login</Link>
+      <footer className="justify-self-end bg-light py-5 px-2 w-100">
+        <Link to="/login" className="paragraph-2">
+          Employee Login
+        </Link>
       </footer>
     </section>
   );

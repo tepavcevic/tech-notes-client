@@ -5,6 +5,7 @@ import useAuth from '../../hooks/useAuth';
 import { useGetNotesQuery } from './notesApiSlice';
 import { useGetUsersQuery } from '../users/usersApiSlice';
 import EditNoteForm from './EditNoteForm';
+import BackButton from '../../components/BackButton';
 
 export default function EditNote() {
   const { username, isManager, isAdmin } = useAuth();
@@ -31,6 +32,7 @@ export default function EditNote() {
   }
   return (
     <>
+      <BackButton url="/dash/notes" />
       {note && users?.length ? (
         <EditNoteForm note={note} users={users} />
       ) : (

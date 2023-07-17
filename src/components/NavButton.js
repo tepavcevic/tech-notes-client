@@ -6,7 +6,9 @@ export default function NavButton({ link, children }) {
       to={link}
       end
       className={({ isActive }) =>
-        `d-flex flex-column btn-link ${isActive ? 'text-danger' : ''}`
+        `d-flex flex-lg-column gap-4 gap-lg-1 btn-link ${
+          isActive ? 'text-danger' : ''
+        }`
       }
     >
       {children}

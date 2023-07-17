@@ -62,24 +62,32 @@ export default function Login() {
       {isLoading && <PulseLoader />}
       {!isLoading && (
         <section>
-          <header>
-            <h1 className="py-4">Employee Login</h1>
+          <header className="py-5 text-center">
+            <h1>Employee Login</h1>
           </header>
-          <Container className="w-50 my-5">
+
+          <Container
+            className="w-100 w-md-75"
+            style={{ height: 'calc(100vh - 285px)' }}
+          >
             <p className="text-danger">{errorMessage}</p>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} className="content-max-width mx-auto">
               <Form.Group className="mb-3" controlId="username">
                 <Form.Label className="fw-bolder">Username</Form.Label>
                 <Form.Control
                   name="username"
                   type="text"
+                  minLength={3}
+                  maxLength={20}
                   ref={userRef}
                   placeholder="Username"
                   value={username}
                   onChange={handleUsername}
                   autoComplete="off"
                   required
+                  isInvalid={!!errorMessage}
                 />
+                <Form.Text className="text-muted">3-20 letters</Form.Text>
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="password">
@@ -87,12 +95,18 @@ export default function Login() {
                 <Form.Control
                   name="password"
                   type="password"
+                  minLength={4}
+                  maxLength={20}
                   placeholder="Password"
                   value={password}
                   onChange={handlePassword}
                   autoComplete="off"
                   required
+                  isInvalid={!!errorMessage}
                 />
+                <Form.Text className="text-muted">
+                  4-20 characters including!@#$%
+                </Form.Text>
               </Form.Group>
 
               <div className="d-flex justify-content-between align-items-center mt-5">
@@ -112,8 +126,11 @@ export default function Login() {
               </div>
             </Form>
           </Container>
-          <footer>
-            <Link to="/">Back to Home</Link>
+
+          <footer className="py-5 px-2 bg-light">
+            <Link to="/" className="paragraph-2">
+              Back to Home
+            </Link>
           </footer>
         </section>
       )}

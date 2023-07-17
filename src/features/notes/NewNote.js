@@ -2,6 +2,7 @@ import PulseLoader from 'react-spinners/PulseLoader';
 
 import { useGetUsersQuery } from '../users/usersApiSlice';
 import NewNoteForm from './NewNoteForm';
+import BackButton from '../../components/BackButton';
 
 export default function NewNote() {
   const { users } = useGetUsersQuery('usersList', {
@@ -12,6 +13,9 @@ export default function NewNote() {
     }),
   });
   return (
-    <>{users.length === 0 ? <PulseLoader /> : <NewNoteForm users={users} />}</>
+    <>
+      <BackButton url="/dash/notes" />
+      {users.length === 0 ? <PulseLoader /> : <NewNoteForm users={users} />}
+    </>
   );
 }
