@@ -38,6 +38,8 @@ body {
 
 .btn {
   &.btn-primary {
+    user-select: none;
+    -webkit-user-select: none;
     border-radius: $btn-border-radius;
     border-color: $f-black;
     color: $white;
@@ -223,6 +225,8 @@ body {
 //styles for header
 
 .px-header {
+  user-select: none;
+  -webkit-user-select: none;
   height: $header-height;
   padding: 28px 0;
   z-index: 100;
@@ -241,6 +245,8 @@ body {
 }
 
 .px-footer {
+  user-select: none;
+  -webkit-user-select: none;
   height: $footer-height;
 }
 
@@ -256,6 +262,8 @@ body {
 //button link
 
 .btn-link {
+  user-select: none;
+  -webkit-user-select: none;
   color: $f-black;
   cursor: pointer;
   text-decoration: underline;
@@ -372,15 +380,4 @@ body {
   to {
     transform: rotate(360deg);
   }
-}
-
-.card-overlay {
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.6);
-  width: 95%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
 }

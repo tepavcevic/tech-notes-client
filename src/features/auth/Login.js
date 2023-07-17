@@ -62,14 +62,11 @@ export default function Login() {
       {isLoading && <PulseLoader />}
       {!isLoading && (
         <section>
-          <header className="py-5 text-center">
-            <h1>Employee Login</h1>
+          <header className="px-header py-5 px-2">
+            <h3 className="m-0">Employee Login</h3>
           </header>
 
-          <Container
-            className="w-100 w-md-75"
-            style={{ height: 'calc(100vh - 285px)' }}
-          >
+          <Container className="main-content w-100 w-md-75">
             <p className="text-danger">{errorMessage}</p>
             <Form onSubmit={handleSubmit} className="content-max-width mx-auto">
               <Form.Group className="mb-3" controlId="username">
@@ -127,7 +124,7 @@ export default function Login() {
             </Form>
           </Container>
 
-          <footer className="py-5 px-2 bg-light">
+          <footer className="px-footer py-5 px-2 bg-light">
             <Link to="/" className="paragraph-2">
               Back to Home
             </Link>
