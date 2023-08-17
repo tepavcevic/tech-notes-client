@@ -124,7 +124,7 @@ export default function EditNoteForm({ note, users }) {
             value={assignedUser}
             onChange={handleAssignedUserChange}
           >
-            {users.map((user) => (
+            {users?.map((user) => (
               <option value={user?.id} key={user?.id}>
                 {user?.username}
               </option>

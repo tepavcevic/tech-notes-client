@@ -7,9 +7,9 @@ export default function DashLayout() {
   return (
     <>
       <DashHeader />
-      <div className="main-content container-lg px-4 pb-5 text-center">
+      <section className="container-md pb-5">
         <Outlet />
-      </div>
+      </section>
       <DashFooter />
     </>
   );

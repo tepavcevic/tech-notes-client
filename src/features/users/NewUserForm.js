@@ -53,7 +53,7 @@ export default function NewUserForm() {
   };
 
   const canSave =
-    [roles.length, validUsername, validPassword].every(Boolean) && !isLoading;
+    [roles?.length, validUsername, validPassword].every(Boolean) && !isLoading;
 
   const onSave = (event) => {
     event.preventDefault();
@@ -65,7 +65,7 @@ export default function NewUserForm() {
 
   return (
     <>
-      <BackButton url="/dash/users" />
+      <BackButton />
       <h1 className="mb-5">Add New User</h1>
 
       <p className="text-danger">{error?.data?.message}</p>

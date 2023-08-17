@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PulseLoader from 'react-spinners/PulseLoader';
 
 import useAuth from '../../hooks/useAuth';
 import useTitle from '../../hooks/useTitle';
@@ -7,6 +6,7 @@ import { useGetNotesQuery } from './notesApiSlice';
 import Note from './Note';
 import BackButton from '../../components/BackButton';
 import ViewNoteModal from '../../components/ViewNoteModal';
+import FullScreenLoader from '../../components/FullScreenLoader';
 
 export default function NotesList() {
   const [note, setNote] = useState(null);
@@ -34,11 +34,12 @@ export default function NotesList() {
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
+  if (isLoading) return <FullScreenLoader />;
+
   return (
     <>
-      <BackButton url="/dash" />
+      <BackButton />
       <h1 className="mb-5">Notes List</h1>
-      {isLoading && <PulseLoader />}
       {isError && error?.data?.message}
 
       <ViewNoteModal
@@ -60,7 +61,7 @@ export default function NotesList() {
         </thead>
         <tbody>
           {isSuccess &&
-            notes?.ids.length > 0 &&
+            notes?.ids?.length > 0 &&
             filteredIds?.map((noteId) => (
               <Note
                 key={noteId}

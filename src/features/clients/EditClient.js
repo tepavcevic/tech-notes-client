@@ -1,25 +1,25 @@
 import { useParams } from 'react-router-dom';
 
 import useTitle from '../../hooks/useTitle';
-import { useGetUsersQuery } from './usersApiSlice';
-import EditUserForm from './EditUserForm';
+import { useGetClientsQuery } from './clientsApiSlice';
+import EditClientForm from './EditClientForm';
 import BackButton from '../../components/BackButton';
 import FullScreenLoader from '../../components/FullScreenLoader';
 
-export default function EditUser() {
-  useTitle('Edit user');
+export default function EditClient() {
+  useTitle('Edit client');
   const { id } = useParams();
 
-  const { user } = useGetUsersQuery('usersList', {
+  const { client } = useGetClientsQuery('clientsList', {
     selectFromResult: ({ data }) => ({
-      user: data?.entities[id],
+      client: data?.entities[id],
     }),
   });
 
   return (
     <>
       <BackButton />
-      {user ? <EditUserForm user={user} /> : <FullScreenLoader />}
+      {client ? <EditClientForm client={client} /> : <FullScreenLoader />}
     </>
   );
 }

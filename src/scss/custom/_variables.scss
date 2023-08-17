@@ -1,16 +1,16 @@
 //breakpoints and grid margins
 
-$sm: 368px;
+$sm: 420px;
 $md: 768px;
 $lg: 1024px;
 $xl: 1440px;
 $xxl: 1600px;
 
-$cmw-sm: 320px;
-$cmw-md: 666px;
-$cmw-lg: 894px;
-$cmw-xl: 1170px;
-$cmw-xxl: 1330px;
+$cmw-sm: 768px;
+$cmw-md: 1024px;
+$cmw-lg: 1440px;
+$cmw-xl: 1599px;
+$cmw-xxl: 1600px;
 
 //colors
 
@@ -92,6 +92,7 @@ $font-size-22: 22px;
 $font-size-20: 20px;
 $font-size-18: 18px;
 $font-size-16: 16px;
+$font-size-15: 15px;
 $font-size-14: 14px;
 $font-size-12: 12px;
 
@@ -132,11 +133,8 @@ $space-120: 120px;
 $space-140: 140px;
 $space-160: 160px;
 
-//header and footer heights
+$header-height-sm: 94px;
+$header-height-sm: 115px;
+$header-height-sm: 140px;
 
-$header-height: 115px;
 $footer-height: 144px;
-
-//content width
-
-$content-max-width: 960px;

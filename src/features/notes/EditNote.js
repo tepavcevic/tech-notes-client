@@ -1,11 +1,11 @@
 import { useParams } from 'react-router-dom';
-import PulseLoader from 'react-spinners/PulseLoader';
 
 import useAuth from '../../hooks/useAuth';
 import { useGetNotesQuery } from './notesApiSlice';
 import { useGetUsersQuery } from '../users/usersApiSlice';
 import EditNoteForm from './EditNoteForm';
 import BackButton from '../../components/BackButton';
+import FullScreenLoader from '../../components/FullScreenLoader';
 
 export default function EditNote() {
   const { username, isManager, isAdmin } = useAuth();
@@ -32,11 +32,11 @@ export default function EditNote() {
   }
   return (
     <>
-      <BackButton url="/dash/notes" />
+      <BackButton />
       {note && users?.length ? (
         <EditNoteForm note={note} users={users} />
       ) : (
-        <PulseLoader />
+        <FullScreenLoader />
       )}
     </>
   );

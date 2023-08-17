@@ -5,30 +5,34 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import useTitle from '../../hooks/useTitle';
-import { useUpdateUserMutation, useDeleteUserMutation } from './usersApiSlice';
+import {
+  useUpdateClientMutation,
+  useDeleteClientMutation,
+} from './clientsApiSlice';
 import { ROLES } from '../../config/roles';
 import ConfirmModal from '../../components/ConfirmModal';
 
-const USER_REGEX = /^[A-z]{3,20}$/;
+const CLIENT_REGEX = /^[A-z]{3,20}$/;
 const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
 
-export default function EditUserForm({ user }) {
-  useTitle('Edit user');
-  const [username, setUsername] = useState(user.username);
-  const [validUsername, setValidUsername] = useState(false);
+export default function EditClientForm({ client }) {
+  useTitle('Edit client');
+  const [clientname, setClientname] = useState(client.clientname);
+  const [validClientname, setValidClientname] = useState(false);
   const [password, setPassword] = useState('');
   const [validPassword, setValidPassword] = useState(false);
-  const [roles, setRoles] = useState(user.roles);
-  const [active, setActive] = useState(user.active);
-  const [updateUser, { isLoading, isSuccess, error }] = useUpdateUserMutation();
-  const [deleteUser, { isSuccess: isDelSuccess, error: delError }] =
-    useDeleteUserMutation();
+  const [roles, setRoles] = useState(client.roles);
+  const [active, setActive] = useState(client.active);
+  const [updateClient, { isLoading, isSuccess, error }] =
+    useUpdateClientMutation();
+  const [deleteClient, { isSuccess: isDelSuccess, error: delError }] =
+    useDeleteClientMutation();
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setValidUsername(USER_REGEX.test(username));
-  }, [username]);
+    setValidClientname(CLIENT_REGEX.test(clientname));
+  }, [clientname]);
 
   useEffect(() => {
     setValidPassword(PWD_REGEX.test(password));
@@ -36,21 +40,21 @@ export default function EditUserForm({ user }) {
 
   useEffect(() => {
     if (isSuccess) {
-      setUsername('');
+      setClientname('');
       setPassword('');
       setRoles([]);
-      navigate('/dash/users');
+      navigate('/dash/clients');
     }
 
     if (isDelSuccess) {
-      setUsername('');
+      setClientname('');
       setPassword('');
       setRoles([]);
-      navigate('/dash/users');
+      navigate('/dash/clients');
     }
   }, [isSuccess, isDelSuccess, navigate]);
 
-  const handleUsernameChange = (event) => setUsername(event.target.value);
+  const handleClientnameChange = (event) => setClientname(event.target.value);
   const handlePasswordChange = (event) => setPassword(event.target.value);
   const handleRolesChange = (event) => {
     if (!event.target.checked) {
@@ -68,55 +72,56 @@ export default function EditUserForm({ user }) {
     setShowModal(true);
   };
 
-  const handleSaveUser = async (event) => {
+  const handleSaveClient = async (event) => {
     event.preventDefault();
 
     if (password) {
-      return updateUser({
-        id: user.id,
-        username,
+      return updateClient({
+        id: client.id,
+        clientname,
         password,
         roles,
         active,
       });
     }
 
-    updateUser({ id: user.id, username, roles, active });
+    updateClient({ id: client.id, clientname, roles, active });
   };
 
-  const handleDeleteUser = (event) => {
+  const handleDeleteClient = (event) => {
     event.preventDefault();
 
-    deleteUser({ id: user.id });
+    deleteClient({ id: client.id });
     handleCloseModal();
   };
 
   const canSave = password
-    ? [roles?.length, validUsername, validPassword].every(Boolean) && !isLoading
-    : [roles?.length, validUsername].every(Boolean) && !isLoading;
+    ? [roles?.length, validClientname, validPassword].every(Boolean) &&
+      !isLoading
+    : [roles?.length, validClientname].every(Boolean) && !isLoading;
 
   return (
     <>
       <ConfirmModal
         show={showModal}
-        handleDelete={handleDeleteUser}
-        message="Are You sure You want to delete this user?"
+        handleDelete={handleDeleteClient}
+        message="Are You sure You want to delete this client?"
         handleClose={handleCloseModal}
       />
-      <h1 className="mb-5">Edit User</h1>
+      <h1 className="mb-5">Edit Client</h1>
 
       <p className="text-danger">
         {(error?.data?.message || delError?.data?.message) ?? ''}
       </p>
       <Form className="text-start">
-        <Form.Group className="mb-3" controlId="username">
-          <Form.Label className="fw-bolder">Username</Form.Label>
+        <Form.Group className="mb-3" controlId="clientname">
+          <Form.Label className="fw-bolder">Clientname</Form.Label>
           <Form.Control
-            name="username"
+            name="clientname"
             type="text"
-            placeholder="Enter username"
-            value={username}
-            onChange={handleUsernameChange}
+            placeholder="Enter clientname"
+            value={clientname}
+            onChange={handleClientnameChange}
             autoComplete="off"
           />
           <Form.Text className="text-muted">3-20 letters</Form.Text>
@@ -159,7 +164,7 @@ export default function EditUserForm({ user }) {
           <Form.Check
             id="active"
             type="switch"
-            label="Is user active"
+            label="Is client active"
             onChange={handleActiveChange}
             checked={active}
           />
@@ -170,7 +175,7 @@ export default function EditUserForm({ user }) {
             variant="primary"
             type="submit"
             className="d-flex align-items-center gap-2"
-            onClick={handleSaveUser}
+            onClick={handleSaveClient}
             disabled={!canSave}
           >
             <UserPlusIcon height={18} width={18} />

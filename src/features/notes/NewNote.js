@@ -1,8 +1,8 @@
-import PulseLoader from 'react-spinners/PulseLoader';
-
 import { useGetUsersQuery } from '../users/usersApiSlice';
+import { useGetClientsQuery } from '../clients/clientsApiSlice';
 import NewNoteForm from './NewNoteForm';
 import BackButton from '../../components/BackButton';
+import FullScreenLoader from '../../components/FullScreenLoader';
 
 export default function NewNote() {
   const { users } = useGetUsersQuery('usersList', {
@@ -12,10 +12,21 @@ export default function NewNote() {
         .filter((user) => user?.active),
     }),
   });
+  const { clients } = useGetClientsQuery('clientsList', {
+    selectFromResult: ({ data }) => ({
+      clients: data?.ids
+        .map((id) => data?.entities[id])
+        .filter((client) => client?.active),
+    }),
+  });
   return (
     <>
-      <BackButton url="/dash/notes" />
-      {users.length === 0 ? <PulseLoader /> : <NewNoteForm users={users} />}
+      <BackButton />
+      {users?.length === 0 ? (
+        <FullScreenLoader />
+      ) : (
+        <NewNoteForm users={users} clients={clients} />
+      )}
     </>
   );
 }
