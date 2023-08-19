@@ -113,7 +113,7 @@ export default function EditClientForm({ client }) {
       <p className="text-danger">
         {(error?.data?.message || delError?.data?.message) ?? ''}
       </p>
-      <Form className="text-start">
+      <Form className="form text-start">
         <Form.Group className="mb-3" controlId="clientname">
           <Form.Label className="fw-bolder">Clientname</Form.Label>
           <Form.Control

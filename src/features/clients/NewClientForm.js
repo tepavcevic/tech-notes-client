@@ -43,28 +43,30 @@ export default function NewClientForm() {
 
       <p className="text-danger">{error?.data?.message}</p>
 
-      <Form className="text-start" onSubmit={handleSubmit(onSubmit)}>
+      <Form className="form text-start" onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="firstName">
-          <Form.Label>First name</Form.Label>
+          <Form.Label>First name (*)</Form.Label>
           <Controller
             control={control}
             name="firstName"
             defaultValue=""
-            render={({ field: { onChange, onBlur, value, ref } }) => (
+            rules={{
+              required: { value: true, message: 'This field is required' },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
               <Form.Control
                 onChange={onChange}
                 value={value}
                 ref={ref}
                 isInvalid={errors.firstName}
                 placeholder="Enter first name"
+                autoComplete="off"
               />
             )}
           />
-          <Form.Text className="text-muted">Login name</Form.Text>
           <Form.Control.Feedback type="invalid">
             {errors.firstName?.message}
           </Form.Control.Feedback>
-          <Form.Text className="text-muted">3-20 letters</Form.Text>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="email">

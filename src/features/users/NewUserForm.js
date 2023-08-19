@@ -70,7 +70,7 @@ export default function NewUserForm() {
 
       <p className="text-danger">{error?.data?.message}</p>
 
-      <Form className="text-start" onSubmit={onSave}>
+      <Form className="form text-start" onSubmit={onSave}>
         <Form.Group className="mb-3" controlId="username">
           <Form.Label>Username</Form.Label>
           <Form.Control

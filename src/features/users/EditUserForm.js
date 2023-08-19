@@ -108,7 +108,7 @@ export default function EditUserForm({ user }) {
       <p className="text-danger">
         {(error?.data?.message || delError?.data?.message) ?? ''}
       </p>
-      <Form className="text-start">
+      <Form className="form text-start">
         <Form.Group className="mb-3" controlId="username">
           <Form.Label className="fw-bolder">Username</Form.Label>
           <Form.Control

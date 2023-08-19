@@ -19,6 +19,8 @@ $container-max-widths: (
 
 $primary: $f-black;
 $danger: $f-primary;
+$input-btn-focus-box-shadow: none;
+$input-btn-focus-width: 0;
 
 @import '../../node_modules/bootstrap/scss/bootstrap';
 
@@ -363,6 +365,10 @@ body {
 
 .offcanvas-body {
   background-color: $f-cool-gray-300;
+
+  @include media-breakpoint-up(lg) {
+    background-color: $white;
+  }
 }
 
 .offcanvas-border {
@@ -580,40 +586,17 @@ body {
   }
 }
 
-.card-overlay {
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(1px);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
+.form {
+  max-width: 600px;
 }
 
-.card-title {
-  font-size: $font-size-18;
-
-  @include media-breakpoint-up(sm) {
-    font-size: $font-size-20;
-  }
+.form-control {
+  border-radius: 0;
+  padding-left: 0;
+  border: none;
+  border-bottom: thin solid rgba(83, 86, 90, 0.25);
 }
 
-.product-image {
-  max-width: 35%;
-  max-height: 35%;
-
-  @include media-breakpoint-up(sm) {
-    max-width: 320px;
-    max-height: 320px;
-  }
-}
-
-.card-attribute {
-  font-size: $font-size-15;
-
-  @include media-breakpoint-up(sm) {
-    font-size: $font-size-16;
-  }
+.form-label {
+  font-size: $font-size-12;
 }

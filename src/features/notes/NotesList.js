@@ -48,7 +48,7 @@ export default function NotesList() {
         handleClose={handleCloseModal}
       />
 
-      <table className="w-100 w-lg-75 content-max-width p-4 mx-auto rounded-4 text-start">
+      <table className="w-100 mx-auto rounded-4 text-start">
         <thead>
           <tr className="row g-2 p-2 bg-light rounded-top shadow-md">
             <th className="col-2">Status</th>

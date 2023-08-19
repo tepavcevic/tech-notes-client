@@ -56,12 +56,12 @@ function App() {
                     <Route path="new" element={<NewClientForm />} />
                   </Route>
                 </Route>
+                <Route path="*" element={<ErrorPage />} />
               </Route>
             </Route>
           </Route>
         </Route>
       </Route>
-      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 }

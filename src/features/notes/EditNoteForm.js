@@ -83,7 +83,7 @@ export default function EditNoteForm({ note, users }) {
         {(error?.data?.message || delError?.data?.message) ?? ''}
       </p>
 
-      <Form className="content-max-width text-start mx-auto">
+      <Form className="form text-start">
         <Form.Group className="mb-3" controlId="title">
           <Form.Label className="fw-bolder">Title</Form.Label>
           <Form.Control

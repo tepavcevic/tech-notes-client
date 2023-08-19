@@ -5,12 +5,14 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
+import useTitle from '../../hooks/useTitle';
 import { setCredentials } from './authSlice';
 import { useLoginMutation } from './authApiSlice';
 import usePersist from '../../hooks/usePersist';
 import FullScreenLoader from '../../components/FullScreenLoader';
 
 export default function Login() {
+  useTitle('Login');
   const userRef = useRef();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -69,7 +71,7 @@ export default function Login() {
 
       <Container className="container-md py-5">
         <p className="text-danger">{errorMessage}</p>
-        <Form onSubmit={handleSubmit} className="content-max-width mx-auto">
+        <Form onSubmit={handleSubmit} className="form mx-auto">
           <Form.Group className="mb-3" controlId="username">
             <Form.Label className="fw-bolder">Username</Form.Label>
             <Form.Control
