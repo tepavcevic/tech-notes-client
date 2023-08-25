@@ -1,6 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -9,57 +10,42 @@ import useTitle from '../../hooks/useTitle';
 import { setCredentials } from './authSlice';
 import { useLoginMutation } from './authApiSlice';
 import usePersist from '../../hooks/usePersist';
-import FullScreenLoader from '../../components/FullScreenLoader';
 
 export default function Login() {
   useTitle('Login');
-  const userRef = useRef();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [login, { isLoading }] = useLoginMutation();
   const [persist, setPersist] = usePersist();
 
-  const handleUsername = (event) => {
-    setUsername(event.target.value);
-  };
-  const handlePassword = (event) => {
-    setPassword(event.target.value);
-  };
-  const handleToggle = () => setPersist((prev) => !prev);
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm();
 
+  const handleToggle = () => setPersist((prev) => !prev);
+
+  const onSubmit = async (data) => {
     try {
-      const { accessToken } = await login({ username, password }).unwrap();
+      const { accessToken } = await login({ ...data }).unwrap();
       dispatch(setCredentials({ accessToken }));
-      setUsername('');
-      setPassword('');
+      reset();
       navigate('/dash');
     } catch (error) {
       if (!error.status) {
-        setErrorMessage('No server response');
+        toast.error('No server response');
       } else if (error.status === 400) {
-        setErrorMessage('Missing username or password');
+        toast.error('Missing username or password');
       } else if (error.status === 401) {
-        setErrorMessage('Unauthorized');
+        toast.error('Wrong username or password');
       } else {
-        setErrorMessage(error?.data?.message);
+        toast.error(error?.data?.message);
       }
     }
   };
-
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
-
-  useEffect(() => {
-    setErrorMessage('');
-  }, [username, password]);
-
-  if (isLoading) return <FullScreenLoader />;
 
   return (
     <section>
@@ -70,40 +56,73 @@ export default function Login() {
       </header>
 
       <Container className="container-md py-5">
-        <p className="text-danger">{errorMessage}</p>
-        <Form onSubmit={handleSubmit} className="form mx-auto">
+        <Form onSubmit={handleSubmit(onSubmit)} className="form mx-auto">
           <Form.Group className="mb-3" controlId="username">
             <Form.Label className="fw-bolder">Username</Form.Label>
-            <Form.Control
+            <Controller
+              control={control}
               name="username"
-              type="text"
-              minLength={3}
-              maxLength={20}
-              ref={userRef}
-              placeholder="Username"
-              value={username}
-              onChange={handleUsername}
-              autoComplete="off"
-              required
-              isInvalid={!!errorMessage}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: 'This field is required' },
+                minLength: {
+                  value: 3,
+                  message: 'Username must be at least 3 characters',
+                },
+                maxLength: {
+                  value: 20,
+                  message: 'Username must be at most 20 characters',
+                },
+              }}
+              render={({ field: { onChange, value, ref } }) => (
+                <Form.Control
+                  onChange={onChange}
+                  value={value}
+                  ref={ref}
+                  isInvalid={errors.username}
+                  placeholder="Enter username"
+                  autoComplete="off"
+                />
+              )}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.username?.message}
+            </Form.Control.Feedback>
             <Form.Text className="text-muted">3-20 letters</Form.Text>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="password">
             <Form.Label className="fw-bolder">Password</Form.Label>
-            <Form.Control
+            <Controller
+              control={control}
               name="password"
-              type="password"
-              minLength={4}
-              maxLength={20}
-              placeholder="Password"
-              value={password}
-              onChange={handlePassword}
-              autoComplete="off"
-              required
-              isInvalid={!!errorMessage}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: 'This field is required' },
+                minLength: {
+                  value: 4,
+                  message: 'Password must be at least 4 characters',
+                },
+                maxLength: {
+                  value: 20,
+                  message: 'Password must be at most 20 characters',
+                },
+              }}
+              render={({ field: { onChange, value, ref } }) => (
+                <Form.Control
+                  onChange={onChange}
+                  value={value}
+                  type="password"
+                  ref={ref}
+                  isInvalid={errors.password}
+                  placeholder="Enter password"
+                  autoComplete="off"
+                />
+              )}
             />
+            <Form.Control.Feedback type="invalid">
+              {errors.password?.message}
+            </Form.Control.Feedback>
             <Form.Text className="text-muted">
               4-20 characters including!@#$%
             </Form.Text>
@@ -120,7 +139,12 @@ export default function Login() {
               />
             </Form.Group>
 
-            <Button type="submit">Submit</Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting || isLoading || !isValid}
+            >
+              {isLoading || isSubmitting ? 'Loading...' : 'Login'}
+            </Button>
           </div>
         </Form>
       </Container>
