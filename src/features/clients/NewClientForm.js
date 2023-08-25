@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -6,18 +8,19 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import useTitle from '../../hooks/useTitle';
+import { setCredentials } from '../auth/authSlice';
 import { useAddNewClientMutation } from './clientsApiSlice';
 import BackButton from '../../components/BackButton';
 import { useRefreshMutation } from '../auth/authApiSlice';
 import Map from '../../components/Map';
-import { useState } from 'react';
 
 export default function NewClientForm() {
   useTitle('New client');
 
   const [addNewClient, { isLoading }] = useAddNewClientMutation();
   const navigate = useNavigate();
-  const [refresh] = useRefreshMutation();
+  const dispatch = useDispatch();
+  const [refresh, { isLoading: isRefreshingToken }] = useRefreshMutation();
   const [mapPosition, setMapPosition] = useState([
     43.82297882218348, 18.36547136306763,
   ]);
@@ -33,9 +36,12 @@ export default function NewClientForm() {
     formState: { errors, isSubmitting, isValid },
   } = useForm({ mode: 'all' });
 
+  const canSave = !isLoading && !isSubmitting && isValid && !isRefreshingToken;
+
   const onSubmit = async (data) => {
     try {
-      await refresh();
+      const { accessToken } = await refresh().unwrap();
+      dispatch(setCredentials({ accessToken }));
       await addNewClient({
         ...data,
         position: {
@@ -309,15 +315,10 @@ export default function NewClientForm() {
             variant="primary"
             type="submit"
             className="d-flex align-items-center gap-2"
-            disabled={isSubmitting || !isValid || isLoading}
+            disabled={canSave}
           >
-            {isSubmitting ||
-              isValid ||
-              (isLoading && (
-                <span className="spinner-border spinner-border-sm mr-1" />
-              ))}
-            {isSubmitting || isValid || isLoading ? (
-              'Loading...'
+            {isSubmitting ? (
+              <span className="spinner-border spinner-border-sm mr-1" />
             ) : (
               <>
                 <UserPlusIcon height={18} width={18} /> Submit

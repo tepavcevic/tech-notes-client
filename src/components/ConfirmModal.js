@@ -8,13 +8,7 @@ export default function ConfirmModal({
   handleClose,
 }) {
   return (
-    <Modal
-      show={show}
-      onHide={handleClose}
-      size="lg"
-      animation={false}
-      centered
-    >
+    <Modal show={show} onHide={handleClose} animation={false} centered>
       <Modal.Header closeButton>
         <Modal.Title>Tech Notes</Modal.Title>
       </Modal.Header>
@@ -24,7 +18,7 @@ export default function ConfirmModal({
         <p className="bold text-danger mt-3">This change is irreversible.</p>
       </Modal.Body>
 
-      <Modal.Footer>
+      <Modal.Footer className="border-0">
         <Button variant="secondary" onClick={handleClose}>
           Cancel
         </Button>

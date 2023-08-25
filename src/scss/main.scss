@@ -600,3 +600,19 @@ body {
 .form-label {
   font-size: $font-size-12;
 }
+
+.modal {
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  border: 0;
+  border-radius: 0;
+  height: 400px;
+  max-width: 600px;
+}
+
+.modal-body,
+.modal-footer {
+  background-color: $f-cool-gray-300;
+}
