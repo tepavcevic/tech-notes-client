@@ -16,7 +16,7 @@ const MemoUser = memo(function User({ userId }) {
   return (
     <tr
       className={`row p-2 border-top ${
-        user.active ? 'bg-light' : 'bg-danger opacity-50'
+        user.active ? 'bg-light' : 'inactive text-secondary'
       } rounded`}
     >
       {user && (

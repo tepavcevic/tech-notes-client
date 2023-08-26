@@ -38,6 +38,7 @@ body {
 
 #root {
   min-height: 100dvh;
+  transition: all 1.5s ease-in-out;
 }
 
 .footer {
@@ -61,9 +62,9 @@ body {
 }
 
 .btn {
+  border-radius: $btn-border-radius;
+  border: $btn-border-width;
   &.btn-primary {
-    border-radius: $btn-border-radius;
-    border: $btn-border-width;
     color: $white;
     font-size: $font-size-18;
     background-color: $f-black;
@@ -459,4 +460,18 @@ body {
 .modal-body,
 .modal-footer {
   background-color: $f-cool-gray-300;
+}
+
+.inactive {
+  background-color: $f-primary-300;
+}
+
+.arrow-icon {
+  height: 20px;
+  width: 20px;
+
+  &:hover {
+    height: 25px;
+    width: 25px;
+  }
 }

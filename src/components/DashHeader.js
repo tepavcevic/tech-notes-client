@@ -81,7 +81,7 @@ export default function DashHeader() {
                     )}
                     <span
                       role="button"
-                      className="header-btn d-flex flex-lg-column gap-4 gap-lg-1 ms-lg-5"
+                      className="header-btn d-flex align-items-center flex-lg-column gap-4 gap-lg-1 ms-lg-5"
                       onClick={() => sendLogout()}
                     >
                       <ArrowRightOnRectangleIcon height={28} />

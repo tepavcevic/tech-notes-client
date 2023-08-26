@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import useTitle from '../../hooks/useTitle';
 import { useGetClientsQuery } from './clientsApiSlice';
 import Client from './Client';
@@ -23,15 +25,24 @@ export default function ClientsList() {
   return (
     <>
       <BackButton />
-      <h1 className="mb-5">Clients List</h1>
+
+      <div className="d-flex justify-content-between align-items-center mb-5">
+        <h1>Clients List</h1>
+        <Link to="new" className="btn-link text-decoration-underline heading-6">
+          Add new client
+        </Link>
+      </div>
+
       {isError && error?.data?.message}
 
       <table className="w-100 w-lg-75 p-4 mx-auto rounded-4 text-start">
         <thead>
           <tr className="row p-2 bg-light rounded-top shadow-md">
-            <th className="col">Clientname</th>
-            <th className="col">Roles</th>
-            <th className="col-2">Edit</th>
+            <th className="col">First name</th>
+            <th className="col">Last name</th>
+            <th className="col-4 d-none d-md-inline">Address</th>
+            <th className="col d-none d-md-inline">Phone</th>
+            <th className="col-2 col-md-1">Edit</th>
           </tr>
         </thead>
         <tbody>

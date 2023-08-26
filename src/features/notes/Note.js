@@ -33,7 +33,7 @@ const MemoNote = memo(function Note({ noteId, setNote, showModal }) {
     >
       {note && (
         <>
-          <td className="col-2">
+          <td className="col-2 col-md">
             {note?.completed ? (
               <span className="text-success">Done</span>
             ) : (
@@ -42,9 +42,9 @@ const MemoNote = memo(function Note({ noteId, setNote, showModal }) {
           </td>
           <td className="col d-none d-md-inline">{created}</td>
           <td className="col d-none d-md-inline">{updated}</td>
-          <td className="col">{note?.title}</td>
+          <td className="col col-md-3 col-lg-5">{note?.title}</td>
           <td className="col d-none d-md-inline">{note?.username}</td>
-          <td className="col-1">
+          <td className="col-2 col-md-1">
             <PencilSquareIcon
               role="button"
               height={20}

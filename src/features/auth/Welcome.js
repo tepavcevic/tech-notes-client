@@ -20,20 +20,20 @@ export default function Welcome() {
         <h1 className="py-5 m-0">Welcome {username}</h1>
 
         <Link className="d-block heading-5 btn-link pb-3 mb-2" to="/dash/notes">
-          <ArrowLongRightIcon height={20} width={20} /> View tech notes
+          <ArrowLongRightIcon className="arrow-icon" /> View tech notes
         </Link>
         <Link
           className="d-block heading-5 btn-link pb-3 mb-2"
           to="/dash/notes/new"
         >
-          <ArrowLongRightIcon height={20} width={20} /> Add new tech note
+          <ArrowLongRightIcon className="arrow-icon" /> Add new tech note
         </Link>
         {(isAdmin || isManager) && (
           <Link
             className="d-block heading-5 btn-link pb-3 mb-2"
             to="/dash/users"
           >
-            <ArrowLongRightIcon height={20} width={20} /> View user settings
+            <ArrowLongRightIcon className="arrow-icon" /> View user settings
           </Link>
         )}
         {(isAdmin || isManager) && (
@@ -41,7 +41,7 @@ export default function Welcome() {
             className="d-block heading-5 btn-link pb-3 mb-2"
             to="/dash/users/new"
           >
-            <ArrowLongRightIcon height={20} width={20} /> Add new user
+            <ArrowLongRightIcon className="arrow-icon" /> Add new user
           </Link>
         )}
         {(isAdmin || isManager) && (
@@ -49,7 +49,7 @@ export default function Welcome() {
             className="d-block heading-5 btn-link pb-3 mb-2"
             to="/dash/clients"
           >
-            <ArrowLongRightIcon height={20} width={20} /> View clients
+            <ArrowLongRightIcon className="arrow-icon" /> View clients
           </Link>
         )}
         {(isAdmin || isManager) && (
@@ -57,7 +57,7 @@ export default function Welcome() {
             className="d-block heading-5 btn-link pb-3 mb-2"
             to="/dash/clients/new"
           >
-            <ArrowLongRightIcon height={20} width={20} /> Add new client
+            <ArrowLongRightIcon className="arrow-icon" /> Add new client
           </Link>
         )}
       </div>

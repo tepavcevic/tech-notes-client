@@ -15,13 +15,18 @@ const MemoClient = memo(function Client({ clientId }) {
   return (
     <tr
       className={`row p-2 border-top ${
-        client.active ? 'bg-light' : 'bg-danger opacity-50'
+        client.active ? 'bg-light' : 'inactive text-secondary'
       } rounded`}
     >
       {client && (
         <>
           <td className="col">{client.firstName}</td>
-          <td className="col-2">
+          <td className="col">{client.lastName}</td>
+          <td className="col-4 d-none d-md-inline">
+            {client.street}, {client.city}
+          </td>
+          <td className="col d-none d-md-inline">{client.phone}</td>
+          <td className="col-2 col-md-1">
             <PencilSquareIcon
               role="button"
               height={20}

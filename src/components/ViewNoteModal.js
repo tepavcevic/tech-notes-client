@@ -3,13 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 
 export default function ViewNoteModal({ note, show, handleClose }) {
   return (
-    <Modal
-      show={show}
-      onHide={handleClose}
-      size="lg"
-      animation={false}
-      centered
-    >
+    <Modal show={show} onHide={handleClose} animation={false} centered>
       <Modal.Header closeButton>
         <Modal.Title>Tech Notes</Modal.Title>
       </Modal.Header>
@@ -20,7 +14,7 @@ export default function ViewNoteModal({ note, show, handleClose }) {
         <p className="text-end">Assigned to: {note?.username}</p>
       </Modal.Body>
 
-      <Modal.Footer className="border-0">
+      <Modal.Footer className="border-0 rounded-0">
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>

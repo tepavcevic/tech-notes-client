@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import useTitle from '../../hooks/useTitle';
 import { useGetUsersQuery } from './usersApiSlice';
 import User from './User';
@@ -23,7 +25,14 @@ export default function UsersList() {
   return (
     <>
       <BackButton />
-      <h1 className="mb-5">Users List</h1>
+
+      <div className="d-flex justify-content-between align-items-center mb-5">
+        <h1>Users List</h1>
+        <Link to="new" className="btn-link text-decoration-underline heading-6">
+          Add new user
+        </Link>
+      </div>
+
       {isError && error?.data?.message}
 
       <table className="w-100 w-lg-75 p-4 mx-auto rounded-4 text-start">
