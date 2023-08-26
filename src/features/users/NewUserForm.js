@@ -1,47 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
+import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import useTitle from '../../hooks/useTitle';
+import { useRefreshMutation } from '../auth/authApiSlice';
+import { setCredentials } from '../auth/authSlice';
 import { useAddNewUserMutation } from './usersApiSlice';
-import { ROLES } from '../../config/roles';
 import BackButton from '../../components/BackButton';
-
-const USER_REGEX = /^[A-z]{3,20}$/;
-const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
+import { ROLES } from '../../config/roles';
 
 export default function NewUserForm() {
   useTitle('New user');
-  const [username, setUsername] = useState('');
-  const [validUsername, setValidUsername] = useState(false);
-  const [password, setPassword] = useState('');
-  const [validPassword, setValidPassword] = useState(false);
+
   const [roles, setRoles] = useState(['Employee']);
-  const [addNewUser, { isLoading, isSuccess, isError, error }] =
-    useAddNewUserMutation();
+  const [addNewUser, { isLoading }] = useAddNewUserMutation();
+  const [refresh, { isLoading: isRefreshingToken }] = useRefreshMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm({ mode: 'all' });
 
-  useEffect(() => {
-    setValidUsername(USER_REGEX.test(username));
-  }, [username]);
+  const canSave = isValid && !isLoading && !isSubmitting && roles.length > 0;
 
-  useEffect(() => {
-    setValidPassword(PWD_REGEX.test(password));
-  }, [password]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setUsername('');
-      setPassword('');
-      setRoles([]);
-      navigate('/dash/users');
-    }
-  }, [isSuccess, navigate]);
-
-  const handleUsernameChange = (event) => setUsername(event.target.value);
-  const handlePasswordChange = (event) => setPassword(event.target.value);
   const handleRolesChange = (event) => {
     if (!event.target.checked) {
       return setRoles((prev) =>
@@ -52,14 +41,26 @@ export default function NewUserForm() {
     setRoles((prev) => [...prev, event.target.value]);
   };
 
-  const canSave =
-    [roles?.length, validUsername, validPassword].every(Boolean) && !isLoading;
+  const onSubmit = async (data) => {
+    try {
+      const { accessToken } = await refresh().unwrap();
+      dispatch(setCredentials({ accessToken }));
 
-  const onSave = (event) => {
-    event.preventDefault();
+      await addNewUser({ ...data, roles }).unwrap();
 
-    if (canSave) {
-      addNewUser({ username, password, roles });
+      toast.success('User added successfully');
+      reset();
+      navigate('/dash/users');
+    } catch (error) {
+      if (!error.status) {
+        toast.error('No server response');
+      } else if (error.status === 400) {
+        toast.error('Missing fields or wrong data format');
+      } else if (error.status === 409) {
+        toast.error('Username already exists');
+      } else {
+        toast.error(error?.data?.message);
+      }
     }
   };
 
@@ -68,44 +69,79 @@ export default function NewUserForm() {
       <BackButton />
       <h1 className="mb-5">Add New User</h1>
 
-      <p className="text-danger">{error?.data?.message}</p>
-
-      <Form className="form text-start" onSubmit={onSave}>
+      <Form className="form text-start" onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="username">
-          <Form.Label>Username</Form.Label>
-          <Form.Control
+          <Form.Label>Username (*)</Form.Label>
+          <Controller
+            control={control}
             name="username"
-            type="text"
-            minLength={3}
-            maxLength={20}
-            placeholder="Enter username"
-            value={username}
-            onChange={handleUsernameChange}
-            autoComplete="off"
-            isInvalid={isError}
+            defaultValue=""
+            rules={{
+              required: { value: true, message: 'This field is required' },
+              minLength: {
+                value: 3,
+                message: 'Username must be at least 3 characters',
+              },
+              maxLength: {
+                value: 20,
+                message: 'Username must be at most 20 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                onChange={onChange}
+                value={value}
+                ref={ref}
+                isInvalid={errors.username}
+                placeholder="Enter username"
+                autoComplete="off"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.username?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">3-20 letters</Form.Text>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
+          <Form.Label>Password (*)</Form.Label>
+          <Controller
+            control={control}
             name="password"
-            type="text"
-            minLength={4}
-            maxLength={20}
-            placeholder="Enter password"
-            value={password}
-            onChange={handlePasswordChange}
-            autoComplete="off"
-            isInvalid={isError}
+            defaultValue=""
+            rules={{
+              required: { value: true, message: 'This field is required' },
+              minLength: {
+                value: 4,
+                message: 'Password must be at least 4 characters',
+              },
+              maxLength: {
+                value: 20,
+                message: 'Password must be at most 20 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                onChange={onChange}
+                value={value}
+                ref={ref}
+                isInvalid={errors.password}
+                placeholder="Enter password"
+                autoComplete="off"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.password?.message}
+          </Form.Control.Feedback>
+
           <Form.Text className="text-muted">
             4-20 characters including!@#$%
           </Form.Text>
         </Form.Group>
         <Form.Group className="mb-5">
-          <Form.Label>Role(s)</Form.Label>
+          <Form.Label>Role(s) (*)</Form.Label>
 
           {Object.values(ROLES).map((role) => (
             <Form.Check
@@ -116,7 +152,6 @@ export default function NewUserForm() {
               label={role}
               onChange={handleRolesChange}
               checked={roles.includes(role)}
-              isInvalid={isError}
             />
           ))}
         </Form.Group>
@@ -128,8 +163,16 @@ export default function NewUserForm() {
             className="d-flex align-items-center gap-2"
             disabled={!canSave}
           >
-            <UserPlusIcon height={18} width={18} />
-            Submit
+            {isSubmitting || isLoading || isRefreshingToken ? (
+              <>
+                <span className="spinner-border spinner-border-sm mr-1" />{' '}
+                Submit
+              </>
+            ) : (
+              <>
+                <UserPlusIcon height={18} width={18} /> Submit
+              </>
+            )}
           </Button>
         </div>
       </Form>

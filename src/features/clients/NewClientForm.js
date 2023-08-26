@@ -315,10 +315,13 @@ export default function NewClientForm() {
             variant="primary"
             type="submit"
             className="d-flex align-items-center gap-2"
-            disabled={canSave}
+            disabled={!canSave}
           >
-            {isSubmitting ? (
-              <span className="spinner-border spinner-border-sm mr-1" />
+            {isSubmitting || isLoading || isRefreshingToken ? (
+              <>
+                <span className="spinner-border spinner-border-sm mr-1" />{' '}
+                Submit
+              </>
             ) : (
               <>
                 <UserPlusIcon height={18} width={18} /> Submit

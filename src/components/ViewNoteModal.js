@@ -20,7 +20,7 @@ export default function ViewNoteModal({ note, show, handleClose }) {
         <p className="text-end">Assigned to: {note?.username}</p>
       </Modal.Body>
 
-      <Modal.Footer>
+      <Modal.Footer className="border-0">
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>

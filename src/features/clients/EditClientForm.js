@@ -52,6 +52,7 @@ export default function EditClientForm({ client }) {
     try {
       const { accessToken } = await refresh().unwrap();
       dispatch(setCredentials({ accessToken }));
+
       await updateClient({
         ...data,
         id: client.id,
@@ -75,12 +76,14 @@ export default function EditClientForm({ client }) {
     }
   };
 
-  const handleDeleteClient = async (event) => {
+  const onDeleteClient = async (event) => {
     event.preventDefault();
     try {
       const { accessToken } = await refresh().unwrap();
       dispatch(setCredentials({ accessToken }));
+
       await deleteClient({ id: client.id }).unwrap();
+
       handleCloseModal();
       toast.success('Client deleted successfully');
       navigate('/dash/clients');
@@ -104,7 +107,7 @@ export default function EditClientForm({ client }) {
 
       <ConfirmModal
         show={showModal}
-        handleDelete={handleDeleteClient}
+        handleDelete={onDeleteClient}
         message="Are You sure You want to delete this client?"
         handleClose={handleCloseModal}
       />

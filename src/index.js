@@ -52,7 +52,6 @@ root.render(
           </ToastBar>
         )}
       </Toaster>
-      ;
     </Provider>
   </React.StrictMode>
 );

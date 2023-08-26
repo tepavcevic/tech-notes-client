@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Form from 'react-bootstrap/Form';
@@ -8,50 +8,30 @@ import useTitle from '../../hooks/useTitle';
 import { useUpdateUserMutation, useDeleteUserMutation } from './usersApiSlice';
 import { ROLES } from '../../config/roles';
 import ConfirmModal from '../../components/ConfirmModal';
-
-const USER_REGEX = /^[A-z]{3,20}$/;
-const PWD_REGEX = /^[A-z0-9!@#$%]{4,12}$/;
+import { useDispatch } from 'react-redux';
+import { useRefreshMutation } from '../auth/authApiSlice';
+import { setCredentials } from '../auth/authSlice';
+import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 
 export default function EditUserForm({ user }) {
   useTitle('Edit user');
-  const [username, setUsername] = useState(user.username);
-  const [validUsername, setValidUsername] = useState(false);
-  const [password, setPassword] = useState('');
-  const [validPassword, setValidPassword] = useState(false);
+
   const [roles, setRoles] = useState(user.roles);
-  const [active, setActive] = useState(user.active);
-  const [updateUser, { isLoading, isSuccess, error }] = useUpdateUserMutation();
-  const [deleteUser, { isSuccess: isDelSuccess, error: delError }] =
-    useDeleteUserMutation();
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
+  const [refresh, { isLoading: isRefreshingToken }] = useRefreshMutation();
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    setValidUsername(USER_REGEX.test(username));
-  }, [username]);
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm({ mode: 'all' });
 
-  useEffect(() => {
-    setValidPassword(PWD_REGEX.test(password));
-  }, [password]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setUsername('');
-      setPassword('');
-      setRoles([]);
-      navigate('/dash/users');
-    }
-
-    if (isDelSuccess) {
-      setUsername('');
-      setPassword('');
-      setRoles([]);
-      navigate('/dash/users');
-    }
-  }, [isSuccess, isDelSuccess, navigate]);
-
-  const handleUsernameChange = (event) => setUsername(event.target.value);
-  const handlePasswordChange = (event) => setPassword(event.target.value);
   const handleRolesChange = (event) => {
     if (!event.target.checked) {
       return setRoles((prev) =>
@@ -61,84 +41,155 @@ export default function EditUserForm({ user }) {
 
     setRoles((prev) => [...prev, event.target.value]);
   };
-  const handleActiveChange = (event) => setActive(event.target.checked);
+
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (event) => {
     event.preventDefault();
     setShowModal(true);
   };
 
-  const handleSaveUser = async (event) => {
-    event.preventDefault();
+  const onSubmit = async (data) => {
+    const { username, password, active } = data;
 
-    if (password) {
-      return updateUser({
-        id: user.id,
-        username,
-        password,
-        roles,
-        active,
-      });
+    try {
+      const { accessToken } = await refresh().unwrap();
+      dispatch(setCredentials({ accessToken }));
+
+      if (password.length === 0) {
+        await updateUser({ id: user.id, username, active, roles }).unwrap();
+      } else {
+        await updateUser({ id: user.id, ...data, roles }).unwrap();
+      }
+
+      toast.success('User edited successfully');
+      reset();
+      navigate('/dash/users');
+    } catch (error) {
+      if (!error.status) {
+        toast.error('No server response');
+      } else if (error.status === 400) {
+        toast.error('Missing fields or wrong data format');
+      } else {
+        toast.error(error?.data?.message);
+      }
     }
-
-    updateUser({ id: user.id, username, roles, active });
   };
 
-  const handleDeleteUser = (event) => {
+  const onDeleteUser = async (event) => {
     event.preventDefault();
+    try {
+      const { accessToken } = await refresh().unwrap();
+      dispatch(setCredentials({ accessToken }));
 
-    deleteUser({ id: user.id });
-    handleCloseModal();
+      await deleteUser({ id: user.id }).unwrap();
+
+      handleCloseModal();
+      toast.success('User deleted successfully');
+      navigate('/dash/users');
+    } catch (error) {
+      handleCloseModal();
+      if (!error.status) {
+        toast.error('No server response');
+      } else if (error.status === 400) {
+        toast.error('Missing fields or wrong data format');
+      } else if (error.status === 409) {
+        toast.error('This user has open notes.');
+      } else {
+        toast.error(error?.data?.message);
+      }
+    }
   };
 
-  const canSave = password
-    ? [roles?.length, validUsername, validPassword].every(Boolean) && !isLoading
-    : [roles?.length, validUsername].every(Boolean) && !isLoading;
+  const canSave =
+    isValid &&
+    !isLoading &&
+    !isSubmitting &&
+    !isRefreshingToken &&
+    roles.length > 0;
 
   return (
     <>
       <ConfirmModal
         show={showModal}
-        handleDelete={handleDeleteUser}
+        handleDelete={onDeleteUser}
         message="Are You sure You want to delete this user?"
         handleClose={handleCloseModal}
       />
       <h1 className="mb-5">Edit User</h1>
 
-      <p className="text-danger">
-        {(error?.data?.message || delError?.data?.message) ?? ''}
-      </p>
-      <Form className="form text-start">
+      <Form className="form text-start" onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="username">
-          <Form.Label className="fw-bolder">Username</Form.Label>
-          <Form.Control
+          <Form.Label className="fw-bolder">Username (*)</Form.Label>
+          <Controller
+            control={control}
             name="username"
-            type="text"
-            placeholder="Enter username"
-            value={username}
-            onChange={handleUsernameChange}
-            autoComplete="off"
+            defaultValue={user.username}
+            rules={{
+              required: { value: true, message: 'This field is required' },
+              minLength: {
+                value: 3,
+                message: 'Username must be at least 3 characters',
+              },
+              maxLength: {
+                value: 20,
+                message: 'Username must be at most 20 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                onChange={onChange}
+                value={value}
+                ref={ref}
+                isInvalid={errors.username}
+                placeholder="Enter username"
+                autoComplete="off"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.username?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">3-20 letters</Form.Text>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="password">
           <Form.Label className="fw-bolder">Password</Form.Label>
-          <Form.Control
+          <Controller
+            control={control}
             name="password"
-            type="text"
-            placeholder="Enter password"
-            value={password}
-            onChange={handlePasswordChange}
-            autoComplete="off"
+            defaultValue=""
+            rules={{
+              required: { value: false },
+              minLength: {
+                value: 4,
+                message: 'Password must be at least 4 characters',
+              },
+              maxLength: {
+                value: 20,
+                message: 'Password must be at most 20 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                onChange={onChange}
+                value={value}
+                ref={ref}
+                isInvalid={errors.password}
+                placeholder="Enter password"
+                autoComplete="off"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.password?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">
             4-20 characters including!@#$%
           </Form.Text>
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label className="fw-bolder">Role(s)</Form.Label>
+          <Form.Label className="fw-bolder">Role(s) (*)</Form.Label>
 
           {Object.values(ROLES).map((role) => (
             <Form.Check
@@ -155,14 +206,27 @@ export default function EditUserForm({ user }) {
         </Form.Group>
 
         <Form.Group className="mb-5">
-          <Form.Label className="fw-bolder">Active status</Form.Label>
-          <Form.Check
-            id="active"
-            type="switch"
-            label="Is user active"
-            onChange={handleActiveChange}
-            checked={active}
+          <Form.Label className="fw-bolder">Active status (*)</Form.Label>
+          <Controller
+            control={control}
+            name="active"
+            defaultValue={user.active}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Check
+                onChange={onChange}
+                checked={value}
+                ref={ref}
+                name="active"
+                id="active"
+                type="switch"
+                label="Is user active"
+                className="mb-2"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.active?.message}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <div className="d-flex justify-content-end align-items-center gap-3">
@@ -170,7 +234,7 @@ export default function EditUserForm({ user }) {
             variant="primary"
             type="submit"
             className="d-flex align-items-center gap-2"
-            onClick={handleSaveUser}
+            onClick={handleSubmit}
             disabled={!canSave}
           >
             <UserPlusIcon height={18} width={18} />
