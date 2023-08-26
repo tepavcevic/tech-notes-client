@@ -2,9 +2,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRightOnRectangleIcon,
-  DocumentPlusIcon,
   DocumentTextIcon,
-  UserPlusIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
 import Nav from 'react-bootstrap/Nav';
@@ -62,48 +60,33 @@ export default function DashHeader() {
                   </Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
-                  <Nav className="justify-content-end flex-grow-1 pe-3">
+                  <Nav className="justify-content-end flex-grow-1 gap-3 pe-3">
                     {!isLoading && (
-                      <Nav.Link eventKey={1}>
-                        <NavButton link="/dash/notes">
-                          <DocumentTextIcon height={28} />
-                          <span>Notes</span>
-                        </NavButton>
-                      </Nav.Link>
-                    )}
-                    {!isLoading && (
-                      <Nav.Link eventKey={2}>
-                        <NavButton link="/dash/notes/new">
-                          <DocumentPlusIcon height={28} />
-                          <span>New note</span>
-                        </NavButton>
-                      </Nav.Link>
+                      <NavButton link="/dash/notes">
+                        <DocumentTextIcon height={28} />
+                        <span>Notes</span>
+                      </NavButton>
                     )}
                     {(isManager || isAdmin) && !isLoading && (
-                      <Nav.Link eventKey={3}>
-                        <NavButton link="/dash/users">
-                          <UsersIcon height={28} />
-                          <span>Users</span>
-                        </NavButton>
-                      </Nav.Link>
+                      <NavButton link="/dash/users">
+                        <UsersIcon height={28} />
+                        <span>Users</span>
+                      </NavButton>
                     )}
                     {(isManager || isAdmin) && !isLoading && (
-                      <Nav.Link eventKey={4}>
-                        <NavButton link="/dash/users/new">
-                          <UserPlusIcon height={28} />
-                          <span>New user</span>
-                        </NavButton>
-                      </Nav.Link>
+                      <NavButton link="/dash/clients">
+                        <UsersIcon height={28} />
+                        <span>Clients</span>
+                      </NavButton>
                     )}
-                    <Nav.Link eventKey={5}>
-                      <span
-                        className="btn-link d-flex flex-lg-column gap-4 gap-lg-1 ms-lg-5"
-                        onClick={() => sendLogout()}
-                      >
-                        <ArrowRightOnRectangleIcon height={28} />
-                        <span>Logout</span>
-                      </span>
-                    </Nav.Link>
+                    <span
+                      role="button"
+                      className="header-btn d-flex flex-lg-column gap-4 gap-lg-1 ms-lg-5"
+                      onClick={() => sendLogout()}
+                    >
+                      <ArrowRightOnRectangleIcon height={28} />
+                      <span>Logout</span>
+                    </span>
                   </Nav>
                 </Offcanvas.Body>
               </Navbar.Offcanvas>
