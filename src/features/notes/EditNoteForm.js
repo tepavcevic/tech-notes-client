@@ -177,6 +177,8 @@ export default function EditNoteForm({
                 onChange={onChange}
                 ref={ref}
               >
+                <option value="">--- Select user ---</option>
+
                 {users?.map((user) => (
                   <option value={user?.id} key={user?.id}>
                     {user?.username}
@@ -209,6 +211,8 @@ export default function EditNoteForm({
                 onChange={onChange}
                 ref={ref}
               >
+                <option value="">--- Select client ---</option>
+
                 {clients?.map((client) => (
                   <option value={client?.id} key={client?.id}>
                     {`${client?.firstName} ${client?.lastName}, ${client?.street}`}

@@ -89,6 +89,10 @@ export default function NewNoteForm({ users, clients }) {
             defaultValue=""
             rules={{
               required: { value: true, message: 'This field is required' },
+              minLength: {
+                value: 4,
+                message: 'Text must be at least 4 characters',
+              },
               maxLength: {
                 value: 800,
                 message: 'Text must be at most 800 characters',
@@ -128,6 +132,7 @@ export default function NewNoteForm({ users, clients }) {
                 onChange={onChange}
                 ref={ref}
               >
+                <option value="">--- Select user ---</option>
                 {users?.map((user) => (
                   <option value={user?.id} key={user?.id}>
                     {user?.username}
@@ -160,6 +165,8 @@ export default function NewNoteForm({ users, clients }) {
                 onChange={onChange}
                 ref={ref}
               >
+                <option value="">--- Select client ---</option>
+
                 {clients?.map((client) => (
                   <option value={client?.id} key={client?.id}>
                     {`${client?.firstName} ${client?.lastName}, ${client?.street}`}
