@@ -3,27 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import { UserPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 
 import useTitle from '../../hooks/useTitle';
+import useRefreshCredentials from '../../hooks/useRefreshCredentials';
 import { useUpdateUserMutation, useDeleteUserMutation } from './usersApiSlice';
 import { ROLES } from '../../config/roles';
 import ConfirmModal from '../../components/ConfirmModal';
-import { useDispatch } from 'react-redux';
-import { useRefreshMutation } from '../auth/authApiSlice';
-import { setCredentials } from '../auth/authSlice';
-import { useForm, Controller } from 'react-hook-form';
-import { toast } from 'react-hot-toast';
 
 export default function EditUserForm({ user }) {
   useTitle('Edit user');
 
   const [roles, setRoles] = useState(user.roles);
+  const [showModal, setShowModal] = useState(false);
   const [updateUser, { isLoading }] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
-  const [refresh, { isLoading: isRefreshingToken }] = useRefreshMutation();
-  const [showModal, setShowModal] = useState(false);
+  const { refreshToken, isRefreshingToken } = useRefreshCredentials();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const {
     handleSubmit,
@@ -31,6 +28,13 @@ export default function EditUserForm({ user }) {
     reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm({ mode: 'all' });
+
+  const canSave =
+    isValid &&
+    !isLoading &&
+    !isSubmitting &&
+    !isRefreshingToken &&
+    roles.length > 0;
 
   const handleRolesChange = (event) => {
     if (!event.target.checked) {
@@ -41,7 +45,6 @@ export default function EditUserForm({ user }) {
 
     setRoles((prev) => [...prev, event.target.value]);
   };
-
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (event) => {
     event.preventDefault();
@@ -52,12 +55,11 @@ export default function EditUserForm({ user }) {
     const { username, password, active } = data;
 
     try {
-      const { accessToken } = await refresh().unwrap();
-      dispatch(setCredentials({ accessToken }));
+      await refreshToken();
 
       if (password.length === 0) {
         await updateUser({ id: user.id, username, active, roles }).unwrap();
-      } else {
+      } else if (password.length > 0) {
         await updateUser({ id: user.id, ...data, roles }).unwrap();
       }
 
@@ -75,11 +77,9 @@ export default function EditUserForm({ user }) {
     }
   };
 
-  const onDeleteUser = async (event) => {
-    event.preventDefault();
+  const onDeleteUser = async () => {
     try {
-      const { accessToken } = await refresh().unwrap();
-      dispatch(setCredentials({ accessToken }));
+      await refreshToken();
 
       await deleteUser({ id: user.id }).unwrap();
 
@@ -99,13 +99,6 @@ export default function EditUserForm({ user }) {
       }
     }
   };
-
-  const canSave =
-    isValid &&
-    !isLoading &&
-    !isSubmitting &&
-    !isRefreshingToken &&
-    roles.length > 0;
 
   return (
     <>
@@ -206,7 +199,7 @@ export default function EditUserForm({ user }) {
         </Form.Group>
 
         <Form.Group className="mb-5">
-          <Form.Label className="fw-bolder">Active status (*)</Form.Label>
+          <Form.Label className="fw-bolder">Active status</Form.Label>
           <Controller
             control={control}
             name="active"

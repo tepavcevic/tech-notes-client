@@ -1,100 +1,130 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { TrashIcon, DocumentPlusIcon } from '@heroicons/react/24/outline';
+import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 
-import useAuth from '../../hooks/useAuth';
 import useTitle from '../../hooks/useTitle';
+import useRefreshCredentials from '../../hooks/useRefreshCredentials';
 import handleFormDate from '../../utils/handleFormDate';
 import { useDeleteNoteMutation, useUpdateNoteMutation } from './notesApiSlice';
 import ConfirmModal from '../../components/ConfirmModal';
 
-export default function EditNoteForm({ note, users }) {
+export default function EditNoteForm({
+  note,
+  users,
+  clients,
+  hasDeleteCredentials,
+}) {
   useTitle('Edit note');
-  const [title, setTitle] = useState(note?.title);
-  const [text, setText] = useState(note?.text);
-  const [assignedUser, setAssignedUser] = useState(note?.user);
-  const [completed, setCompleted] = useState(note?.completed);
-  const navigate = useNavigate();
-  const [updateNote, { isLoading, isSuccess, error }] = useUpdateNoteMutation();
-  const [deleteNote, { isSuccess: isDelSuccess, error: delError }] =
-    useDeleteNoteMutation();
-  const { isManager, isAdmin } = useAuth();
+
+  const [updateNote, { isLoading }] = useUpdateNoteMutation();
+  const [deleteNote, { iisLoading: delLoading }] = useDeleteNoteMutation();
   const [showModal, setShowModal] = useState(false);
+  const { refreshToken, isRefreshingToken } = useRefreshCredentials();
+  const navigate = useNavigate();
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm({ mode: 'all' });
+
+  const canSave =
+    isValid && !isLoading && !delLoading && !isSubmitting && !isRefreshingToken;
 
   const created = handleFormDate(note?.createdAt);
   const updated = handleFormDate(note?.updatedAt);
-
-  useEffect(() => {
-    if (isSuccess || isDelSuccess) {
-      setTitle('');
-      setText('');
-      setAssignedUser('');
-      navigate('/dash/notes');
-    }
-  }, [isSuccess, isDelSuccess, navigate]);
-
-  const canSave = [title, text, assignedUser].every(Boolean) && !isLoading;
-
-  const handleTitleChange = (event) => setTitle(event.target.value);
-  const handleTextChange = (event) => setText(event.target.value);
-  const handleAssignedUserChange = (event) =>
-    setAssignedUser(event.target.value);
-  const handleCompletedChange = (event) => setCompleted(event.target.checked);
   const handleCloseModal = () => setShowModal(false);
   const handleShowModal = (event) => {
     event.preventDefault();
     setShowModal(true);
   };
 
-  const handleSaveNote = (event) => {
-    event.preventDefault();
+  const onSubmit = async (data) => {
+    try {
+      await refreshToken();
 
-    if (canSave) {
-      updateNote({
-        id: note?.id,
-        title,
-        text,
-        user: assignedUser,
-        completed,
-      });
+      await updateNote({ id: note.id, ...data }).unwrap();
+
+      toast.success('Note edited successfully');
+      reset();
+      navigate('/dash/notes');
+    } catch (error) {
+      console.log(error);
+      if (!error.status) {
+        toast.error('No server response');
+      } else if (error.status === 400) {
+        toast.error('Missing fields, wrong data format or note not completed');
+      } else {
+        toast.error(error?.data?.message);
+      }
     }
   };
 
-  const handleDeleteNote = (event) => {
-    event.preventDefault();
+  const onDeleteNote = async () => {
+    try {
+      await refreshToken();
 
-    deleteNote({ id: note?.id });
-    handleCloseModal();
+      await deleteNote({ id: note.id }).unwrap();
+
+      handleCloseModal();
+      toast.success('Note deleted successfully');
+      navigate('/dash/notes');
+    } catch (error) {
+      handleCloseModal();
+      if (!error.status) {
+        toast.error('No server response');
+      } else if (error.status === 400) {
+        toast.error('Missing fields or wrong data format');
+      } else {
+        toast.error(error?.data?.message);
+      }
+    }
   };
+
   return (
     <>
       <ConfirmModal
         show={showModal}
-        handleDelete={handleDeleteNote}
+        handleDelete={onDeleteNote}
         message="Are You sure You want to delete this note?"
         handleClose={handleCloseModal}
       />
 
       <h1 className="mb-5">{`Edit Note #${note?.ticket || 'N/A'}`}</h1>
 
-      <p className="text-danger">
-        {(error?.data?.message || delError?.data?.message) ?? ''}
-      </p>
-
-      <Form className="form text-start">
+      <Form className="form text-start" onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="title">
           <Form.Label className="fw-bolder">Title</Form.Label>
-          <Form.Control
+          <Controller
+            control={control}
             name="title"
-            type="text"
-            maxLength={80}
-            placeholder="Enter title"
-            value={title}
-            onChange={handleTitleChange}
-            autoComplete="off"
+            defaultValue={note?.title}
+            rules={{
+              required: { value: true, message: 'This field is required' },
+              maxLength: {
+                value: 80,
+                message: 'Title must be at most 80 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                name="title"
+                type="text"
+                placeholder="Enter title"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                autoComplete="off"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.title?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">
             Every note should have a unique title, no longer than 80 characters
           </Form.Text>
@@ -102,47 +132,117 @@ export default function EditNoteForm({ note, users }) {
 
         <Form.Group className="mb-3" controlId="text">
           <Form.Label className="fw-bolder">Text</Form.Label>
-          <Form.Control
+          <Controller
+            control={control}
             name="text"
-            as="textarea"
-            maxLength={800}
-            style={{ height: 150 }}
-            placeholder="Enter text"
-            value={text}
-            onChange={handleTextChange}
-            autoComplete="off"
+            defaultValue={note?.text}
+            rules={{
+              required: { value: true, message: 'This field is required' },
+              maxLength: {
+                value: 800,
+                message: 'Text must be at most 800 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                as="textarea"
+                rows={10}
+                onChange={onChange}
+                value={value}
+                ref={ref}
+                isInvalid={errors.text}
+                placeholder="Enter text"
+                autoComplete="off"
+              />
+            )}
           />
-          <Form.Text className="text-muted">
-            You can describe the issue in 800 characters or less
-          </Form.Text>
+          <Form.Control.Feedback type="invalid">
+            {errors.text?.message}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label className="fw-bolder">User(s)</Form.Label>
-          <Form.Select
-            className="mb-2"
-            value={assignedUser}
-            onChange={handleAssignedUserChange}
-          >
-            {users?.map((user) => (
-              <option value={user?.id} key={user?.id}>
-                {user?.username}
-              </option>
-            ))}
-          </Form.Select>
+          <Controller
+            control={control}
+            name="user"
+            defaultValue={note?.user}
+            rules={{
+              required: { value: true, message: 'This field is required' },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Select
+                className="mb-2"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+              >
+                {users?.map((user) => (
+                  <option value={user?.id} key={user?.id}>
+                    {user?.username}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.user?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">
             You can assign note to one of these users
           </Form.Text>
         </Form.Group>
 
         <Form.Group className="mb-3">
+          <Form.Label className="fw-bolder">Client</Form.Label>
+          <Controller
+            control={control}
+            name="client"
+            defaultValue={note?.client}
+            rules={{
+              required: { value: true, message: 'This field is required' },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Select
+                className="mb-2"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+              >
+                {clients?.map((client) => (
+                  <option value={client?.id} key={client?.id}>
+                    {`${client?.firstName} ${client?.lastName}, ${client?.street}`}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.client?.message}
+          </Form.Control.Feedback>
+          <Form.Text className="text-muted">
+            Which client needs the repair?
+          </Form.Text>
+        </Form.Group>
+
+        <Form.Group className="mb-3">
           <Form.Label className="fw-bolder">Completed status</Form.Label>
-          <Form.Check
-            id="completed"
-            type="switch"
-            label="Is note completed"
-            onChange={handleCompletedChange}
-            checked={completed}
+          <Controller
+            control={control}
+            name="completed"
+            defaultValue={note.completed}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Check
+                onChange={onChange}
+                checked={value}
+                ref={ref}
+                name="completed"
+                id="completed"
+                type="switch"
+                label="Is note completed"
+                className="mb-3"
+              />
+            )}
           />
         </Form.Group>
 
@@ -166,14 +266,13 @@ export default function EditNoteForm({ note, users }) {
             variant="primary"
             type="submit"
             className="d-flex align-items-center gap-2"
-            onClick={handleSaveNote}
             disabled={!canSave}
           >
             <DocumentPlusIcon height={18} width={18} />
             Submit
           </Button>
 
-          {(isManager || isAdmin) && (
+          {hasDeleteCredentials && (
             <Button
               variant="danger"
               type="submit"

@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import useTitle from '../../hooks/useTitle';
-import { useRefreshMutation } from '../auth/authApiSlice';
-import { setCredentials } from '../auth/authSlice';
+import useRefreshCredentials from '../../hooks/useRefreshCredentials';
 import { useAddNewUserMutation } from './usersApiSlice';
 import BackButton from '../../components/BackButton';
 import { ROLES } from '../../config/roles';
@@ -19,9 +17,8 @@ export default function NewUserForm() {
 
   const [roles, setRoles] = useState(['Employee']);
   const [addNewUser, { isLoading }] = useAddNewUserMutation();
-  const [refresh, { isLoading: isRefreshingToken }] = useRefreshMutation();
+  const { refreshToken, isRefreshingToken } = useRefreshCredentials();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const {
     handleSubmit,
     control,
@@ -43,8 +40,7 @@ export default function NewUserForm() {
 
   const onSubmit = async (data) => {
     try {
-      const { accessToken } = await refresh().unwrap();
-      dispatch(setCredentials({ accessToken }));
+      await refreshToken();
 
       await addNewUser({ ...data, roles }).unwrap();
 

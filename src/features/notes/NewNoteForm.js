@@ -1,51 +1,46 @@
-import { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { DocumentPlusIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
+import { useForm, Controller } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 
 import useTitle from '../../hooks/useTitle';
+import useRefreshCredentials from '../../hooks/useRefreshCredentials';
 import { useAddNewNoteMutation } from './notesApiSlice';
 
 export default function NewNoteForm({ users, clients }) {
   useTitle('New note');
-  const [title, setTitle] = useState('');
-  const [text, setText] = useState('');
-  const [assignedUser, setAssignedUser] = useState(users?.[0]?.id);
-  const [assignedClient, setAssignedClient] = useState(clients?.[0]?.id);
 
+  const [addNewNote, { isLoading }] = useAddNewNoteMutation();
+  const { refreshToken, isRefreshingToken } = useRefreshCredentials();
   const navigate = useNavigate();
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm({ mode: 'all' });
 
-  const [addNewNote, { isLoading, isSuccess, error }] = useAddNewNoteMutation();
+  const canSave = isValid && !isLoading && !isSubmitting;
 
-  useEffect(() => {
-    if (isSuccess) {
-      setTitle('');
-      setText('');
-      setAssignedUser('');
+  const onSave = async (data) => {
+    try {
+      await refreshToken();
+
+      await addNewNote(data).unwrap();
+
+      toast.success('Note added successfully');
+      reset();
       navigate('/dash/notes');
-    }
-  }, [isSuccess, navigate]);
-
-  const canSave = [title, text, assignedUser].every(Boolean) && !isLoading;
-
-  const handleTitleChange = (event) => setTitle(event.target.value);
-  const handleTextChange = (event) => setText(event.target.value);
-  const handleAssignedUserChange = (event) =>
-    setAssignedUser(event.target.value);
-  const handleAssignedClientChange = (event) =>
-    setAssignedClient(event.target.value);
-
-  const handleSaveNote = (event) => {
-    event.preventDefault();
-
-    if (canSave) {
-      addNewNote({
-        title,
-        text,
-        user: assignedUser,
-        client: assignedClient,
-      });
+    } catch (error) {
+      if (!error.status) {
+        toast.error('No server response');
+      } else if (error.status === 400) {
+        toast.error('Missing fields or wrong data format');
+      } else {
+        toast.error(error?.data?.message);
+      }
     }
   };
 
@@ -53,20 +48,34 @@ export default function NewNoteForm({ users, clients }) {
     <>
       <h1 className="mb-5">Add New Note</h1>
 
-      <p className="text-danger">{error?.data?.message ?? ''}</p>
-
-      <Form className="form text-start">
+      <Form className="form text-start" onSubmit={handleSubmit(onSave)}>
         <Form.Group className="mb-3" controlId="title">
           <Form.Label className="fw-bolder">Title</Form.Label>
-          <Form.Control
+          <Controller
+            control={control}
             name="title"
-            type="text"
-            maxLength={80}
-            placeholder="Enter title"
-            value={title}
-            onChange={handleTitleChange}
-            autoComplete="off"
+            defaultValue=""
+            rules={{
+              required: { value: true, message: 'This field is required' },
+              maxLength: {
+                value: 80,
+                message: 'Title must be at most 80 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                onChange={onChange}
+                value={value}
+                ref={ref}
+                isInvalid={errors.title}
+                placeholder="Enter title"
+                autoComplete="off"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.title?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">
             Every note should have a unique title, no longer than 80 characters
           </Form.Text>
@@ -74,51 +83,96 @@ export default function NewNoteForm({ users, clients }) {
 
         <Form.Group className="mb-3" controlId="text">
           <Form.Label className="fw-bolder">Text</Form.Label>
-          <Form.Control
+          <Controller
+            control={control}
             name="text"
-            as="textarea"
-            maxLength={800}
-            style={{ height: 150 }}
-            placeholder="Enter text"
-            value={text}
-            onChange={handleTextChange}
-            autoComplete="off"
+            defaultValue=""
+            rules={{
+              required: { value: true, message: 'This field is required' },
+              maxLength: {
+                value: 800,
+                message: 'Text must be at most 800 characters',
+              },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Control
+                as="textarea"
+                rows={10}
+                onChange={onChange}
+                value={value}
+                ref={ref}
+                isInvalid={errors.text}
+                placeholder="Enter text"
+                autoComplete="off"
+              />
+            )}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.text?.message}
+          </Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group className="mb-5">
+        <Form.Group className="mb-3">
           <Form.Label className="fw-bolder">User(s)</Form.Label>
-          <Form.Select
-            className="mb-2"
-            value={assignedUser}
-            onChange={handleAssignedUserChange}
-          >
-            {users?.map((user) => (
-              <option value={user?.id} key={user?.id}>
-                {user?.username}
-              </option>
-            ))}
-          </Form.Select>
+          <Controller
+            control={control}
+            name="user"
+            defaultValue=""
+            rules={{
+              required: { value: true, message: 'This field is required' },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Select
+                className="mb-2"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+              >
+                {users?.map((user) => (
+                  <option value={user?.id} key={user?.id}>
+                    {user?.username}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.user?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">
             You can assign note to one of these users
           </Form.Text>
         </Form.Group>
 
-        <Form.Group className="mb-5">
+        <Form.Group className="mb-3">
           <Form.Label className="fw-bolder">Client</Form.Label>
-          <Form.Select
-            className="mb-2"
-            value={assignedClient}
-            onChange={handleAssignedClientChange}
-          >
-            {clients?.map((client) => (
-              <option value={client?.id} key={client?.id}>
-                {`${client?.firstName} ${client?.lastName}`}
-              </option>
-            ))}
-          </Form.Select>
+          <Controller
+            control={control}
+            name="client"
+            defaultValue=""
+            rules={{
+              required: { value: true, message: 'This field is required' },
+            }}
+            render={({ field: { onChange, value, ref } }) => (
+              <Form.Select
+                className="mb-2"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+              >
+                {clients?.map((client) => (
+                  <option value={client?.id} key={client?.id}>
+                    {`${client?.firstName} ${client?.lastName}, ${client?.street}`}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.client?.message}
+          </Form.Control.Feedback>
           <Form.Text className="text-muted">
-            Which user needs the repair?
+            Which client needs the repair?
           </Form.Text>
         </Form.Group>
 
@@ -127,11 +181,18 @@ export default function NewNoteForm({ users, clients }) {
             variant="primary"
             type="submit"
             className="d-flex align-items-center gap-2"
-            onClick={handleSaveNote}
             disabled={!canSave}
           >
-            <DocumentPlusIcon height={18} width={18} />
-            Submit
+            {isSubmitting || isLoading || isRefreshingToken ? (
+              <>
+                <span className="spinner-border spinner-border-sm mr-1" />{' '}
+                Submit
+              </>
+            ) : (
+              <>
+                <DocumentPlusIcon height={18} width={18} /> Submit
+              </>
+            )}
           </Button>
         </div>
       </Form>

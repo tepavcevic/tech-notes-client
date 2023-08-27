@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -8,19 +7,17 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import useTitle from '../../hooks/useTitle';
-import { setCredentials } from '../auth/authSlice';
+import useRefreshCredentials from '../../hooks/useRefreshCredentials';
 import { useAddNewClientMutation } from './clientsApiSlice';
 import BackButton from '../../components/BackButton';
-import { useRefreshMutation } from '../auth/authApiSlice';
 import Map from '../../components/Map';
 
 export default function NewClientForm() {
   useTitle('New client');
 
   const [addNewClient, { isLoading }] = useAddNewClientMutation();
+  const { refreshToken, isRefreshingToken } = useRefreshCredentials();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [refresh, { isLoading: isRefreshingToken }] = useRefreshMutation();
   const [mapPosition, setMapPosition] = useState([
     43.82297882218348, 18.36547136306763,
   ]);
@@ -40,8 +37,7 @@ export default function NewClientForm() {
 
   const onSubmit = async (data) => {
     try {
-      const { accessToken } = await refresh().unwrap();
-      dispatch(setCredentials({ accessToken }));
+      await refreshToken();
       await addNewClient({
         ...data,
         position: {

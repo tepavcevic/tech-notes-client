@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRightOnRectangleIcon,
   DocumentTextIcon,
+  IdentificationIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
 import Nav from 'react-bootstrap/Nav';
@@ -69,7 +70,7 @@ export default function DashHeader() {
                     )}
                     {(isManager || isAdmin) && !isLoading && (
                       <NavButton link="/dash/users">
-                        <UsersIcon height={28} />
+                        <IdentificationIcon height={28} />
                         <span>Users</span>
                       </NavButton>
                     )}

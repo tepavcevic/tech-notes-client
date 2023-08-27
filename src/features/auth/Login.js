@@ -49,11 +49,7 @@ export default function Login() {
 
   return (
     <section>
-      <header className="header border-bottom py-5">
-        <div className="container-md">
-          <h3 className="m-0">Login</h3>
-        </div>
-      </header>
+      <header className="header border-bottom py-5"></header>
 
       <Container className="container-md py-5">
         <Form onSubmit={handleSubmit(onSubmit)} className="form mx-auto">

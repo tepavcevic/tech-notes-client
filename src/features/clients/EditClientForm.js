@@ -3,17 +3,15 @@ import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { UserPlusIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { useDispatch } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
 import useTitle from '../../hooks/useTitle';
-import { setCredentials } from '../auth/authSlice';
 import {
   useUpdateClientMutation,
   useDeleteClientMutation,
 } from './clientsApiSlice';
-import { useRefreshMutation } from '../auth/authApiSlice';
+import useRefreshCredentials from '../../hooks/useRefreshCredentials';
 import ConfirmModal from '../../components/ConfirmModal';
 import Map from '../../components/Map';
 
@@ -24,8 +22,7 @@ export default function EditClientForm({ client }) {
   const [deleteClient, { isLoading: delLoading }] = useDeleteClientMutation();
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [refresh] = useRefreshMutation();
+  const { refreshToken, isRefreshingToken } = useRefreshCredentials();
   const [mapPosition, setMapPosition] = useState([
     client.position?.lat || 43.82297882218348,
     client.position?.lng || 18.36547136306763,
@@ -37,7 +34,8 @@ export default function EditClientForm({ client }) {
     formState: { errors, isSubmitting, isValid },
   } = useForm({ mode: 'all' });
 
-  const canSave = !isLoading || !delLoading || isValid || !isSubmitting;
+  const canSave =
+    !isLoading || !delLoading || isValid || !isSubmitting || isRefreshingToken;
 
   const handlePositionChange = (newPosition) => {
     setMapPosition(newPosition);
@@ -50,8 +48,7 @@ export default function EditClientForm({ client }) {
 
   const onSubmit = async (data) => {
     try {
-      const { accessToken } = await refresh().unwrap();
-      dispatch(setCredentials({ accessToken }));
+      await refreshToken();
 
       await updateClient({
         ...data,
@@ -76,11 +73,9 @@ export default function EditClientForm({ client }) {
     }
   };
 
-  const onDeleteClient = async (event) => {
-    event.preventDefault();
+  const onDeleteClient = async () => {
     try {
-      const { accessToken } = await refresh().unwrap();
-      dispatch(setCredentials({ accessToken }));
+      await refreshToken();
 
       await deleteClient({ id: client.id }).unwrap();
 

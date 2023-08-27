@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { useGetNotesQuery } from './notesApiSlice';
 import { useGetUsersQuery } from '../users/usersApiSlice';
+import { useGetClientsQuery } from '../clients/clientsApiSlice';
 import EditNoteForm from './EditNoteForm';
 import BackButton from '../../components/BackButton';
 import FullScreenLoader from '../../components/FullScreenLoader';
@@ -22,6 +23,13 @@ export default function EditNote() {
         .filter((user) => user?.active),
     }),
   });
+  const { clients } = useGetClientsQuery('clientsList', {
+    selectFromResult: ({ data }) => ({
+      clients: data?.ids
+        .map((id) => data?.entities[id])
+        .filter((client) => client?.active),
+    }),
+  });
 
   if (!isManager && !isAdmin) {
     if (note.username !== username) {
@@ -34,7 +42,12 @@ export default function EditNote() {
     <>
       <BackButton />
       {note && users?.length ? (
-        <EditNoteForm note={note} users={users} />
+        <EditNoteForm
+          note={note}
+          users={users}
+          clients={clients}
+          hasDeleteCredentials={isManager || isAdmin}
+        />
       ) : (
         <FullScreenLoader />
       )}
