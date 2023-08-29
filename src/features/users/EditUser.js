@@ -18,7 +18,7 @@ export default function EditUser() {
 
   return (
     <>
-      <BackButton />
+      <BackButton to="/dash/users" />
       {user ? <EditUserForm user={user} /> : <FullScreenLoader />}
     </>
   );

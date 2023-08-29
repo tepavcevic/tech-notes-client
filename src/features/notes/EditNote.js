@@ -40,7 +40,7 @@ export default function EditNote() {
   }
   return (
     <>
-      <BackButton />
+      <BackButton to="/dash/notes" />
       {note && users?.length ? (
         <EditNoteForm
           note={note}

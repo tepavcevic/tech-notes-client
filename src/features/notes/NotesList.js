@@ -40,7 +40,7 @@ export default function NotesList() {
 
   return (
     <>
-      <BackButton />
+      <BackButton to="/dash" />
 
       <div className="d-flex justify-content-between align-items-center mb-5">
         <h1>Notes List</h1>

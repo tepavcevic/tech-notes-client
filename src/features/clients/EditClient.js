@@ -18,7 +18,7 @@ export default function EditClient() {
 
   return (
     <>
-      <BackButton />
+      <BackButton to="/dash/clients" />
       {client ? <EditClientForm client={client} /> : <FullScreenLoader />}
     </>
   );

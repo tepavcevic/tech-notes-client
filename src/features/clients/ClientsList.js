@@ -24,7 +24,7 @@ export default function ClientsList() {
 
   return (
     <>
-      <BackButton />
+      <BackButton to="/dash" />
 
       <div className="d-flex justify-content-between align-items-center mb-5">
         <h1>Clients List</h1>

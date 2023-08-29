@@ -24,7 +24,7 @@ export default function UsersList() {
 
   return (
     <>
-      <BackButton />
+      <BackButton to="/dash" />
 
       <div className="d-flex justify-content-between align-items-center mb-5">
         <h1>Users List</h1>

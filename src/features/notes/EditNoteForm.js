@@ -238,7 +238,7 @@ export default function EditNoteForm({
             render={({ field: { onChange, value, ref } }) => (
               <Form.Check
                 onChange={onChange}
-                checked={value}
+                value={value}
                 ref={ref}
                 name="completed"
                 id="completed"
