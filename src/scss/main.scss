@@ -41,6 +41,20 @@ body {
   transition: all 2s ease-in;
 }
 
+.main-content {
+  min-height: calc(100dvh - 94px - 122px);
+
+  @include media-breakpoint-up(sm) {
+    min-height: calc(100dvh - 94px - 122px);
+  }
+  @include media-breakpoint-up(md) {
+    min-height: calc(100dvh - 115px - 122px);
+  }
+  @include media-breakpoint-up(xl) {
+    min-height: calc(100dvh - 140px - 122px);
+  }
+}
+
 .footer {
   user-select: none;
   -webkit-user-select: none;

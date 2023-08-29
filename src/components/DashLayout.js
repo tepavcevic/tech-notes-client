@@ -7,7 +7,7 @@ export default function DashLayout() {
   return (
     <>
       <DashHeader />
-      <section className="container-md pb-5">
+      <section className="container-md main-content pb-5">
         <Outlet />
       </section>
       <DashFooter />
