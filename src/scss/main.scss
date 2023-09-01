@@ -103,6 +103,11 @@ body {
     }
   }
 
+  &.btn-xs {
+    font-size: $btn-font-size-xs;
+    padding: $btn-padding-y-xs $btn-padding-x-xs;
+  }
+
   &.btn-sm {
     font-size: $btn-font-size-sm;
     padding: $btn-padding-y-sm $btn-padding-x-sm;
@@ -449,11 +454,6 @@ body {
 .form-select {
   border-radius: 0;
   padding-left: 8px;
-
-  &[type='text'] {
-    border: none;
-    border-bottom: thin solid rgba(83, 86, 90, 0.25);
-  }
 }
 
 .form-label {

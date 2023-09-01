@@ -3,15 +3,8 @@ import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
-import { useGetNotesQuery } from './notesApiSlice';
-
-const MemoNote = memo(function Note({ noteId, setNote, showModal }) {
+const MemoNoteTableRow = memo(function NoteTableRow({ note }) {
   const navigate = useNavigate();
-  const { note } = useGetNotesQuery('notesList', {
-    selectFromResult: ({ data }) => ({
-      note: data?.entities[noteId],
-    }),
-  });
 
   const created = new Date(note?.createdAt).toLocaleString('en-UK', {
     day: 'numeric',
@@ -24,13 +17,7 @@ const MemoNote = memo(function Note({ noteId, setNote, showModal }) {
   });
 
   return (
-    <tr
-      className="row p-2 border-top bg-light rounded cursor-pointer"
-      onClick={() => {
-        setNote(note);
-        showModal();
-      }}
-    >
+    <tr className="row p-2 border-top bg-light rounded cursor-pointer">
       {note && (
         <>
           <td className="col-2 col-md">
@@ -42,14 +29,19 @@ const MemoNote = memo(function Note({ noteId, setNote, showModal }) {
           </td>
           <td className="col d-none d-md-inline">{created}</td>
           <td className="col d-none d-md-inline">{updated}</td>
-          <td className="col col-md-3 col-lg-5">{note?.title}</td>
+          <td
+            className="col col-md-3 col-lg-5 btn-click"
+            onClick={() => navigate(`/dash/notes/${note._id}`)}
+          >
+            {note?.title}
+          </td>
           <td className="col d-none d-md-inline">{note?.username}</td>
-          <td className="col-2 col-md-1">
+          <td className="col-2 col-md-1 text-center">
             <PencilSquareIcon
               role="button"
               height={20}
               width={20}
-              onClick={() => navigate(`/dash/notes/${noteId}`)}
+              onClick={() => navigate(`/dash/notes/edit/${note._id}`)}
             />
           </td>
         </>
@@ -58,4 +50,4 @@ const MemoNote = memo(function Note({ noteId, setNote, showModal }) {
   );
 });
 
-export default MemoNote;
+export default MemoNoteTableRow;

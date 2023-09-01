@@ -1,36 +1,40 @@
 import { createSelector, createEntityAdapter } from '@reduxjs/toolkit';
 import { apiSlice } from '../../app/api/apiSlice';
 
-const notesAdapter = createEntityAdapter({
-  sortComparer: (a, b) =>
-    a.completed === b.completed ? 0 : a.completed ? 1 : -1,
-});
+const notesAdapter = createEntityAdapter();
 
 const initialState = notesAdapter.getInitialState();
 
 export const notesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getNotes: builder.query({
-      query: () => ({
-        url: '/notes',
+      query: ({
+        page = 1,
+        limit = 10,
+        filter = '',
+        field = '',
+        order = '',
+      }) => ({
+        url: `/notes?page=${page}&limit=${limit}&filter=${filter}&sortBy=${field}&order=${order}`,
         validateStatus: (response, result) => {
           return response.status === 200 && !result.isError;
         },
       }),
       transformResponse: (responseData) => {
-        const loadedNotes = responseData.map((note) => {
+        const loadedNotes = responseData.notes.map((note) => {
           note.id = note._id;
           return note;
         });
-        return notesAdapter.setAll(initialState, loadedNotes);
+
+        return {
+          notes: loadedNotes,
+          totalCount: responseData.totalCount,
+          currentPage: responseData.currentPage,
+          totalPages: responseData.totalPages,
+        };
       },
       providesTags: (result, error, arg) => {
-        if (result?.ids) {
-          return [
-            { type: 'Note', id: 'LIST' },
-            ...result.ids?.map((id) => ({ type: 'Note', id })),
-          ];
-        } else return [{ type: 'Note', id: 'LIST' }];
+        return [{ type: 'Note', id: 'LIST' }];
       },
     }),
     addNewNote: builder.mutation({
@@ -65,6 +69,7 @@ export const {
   useAddNewNoteMutation,
   useUpdateNoteMutation,
   useDeleteNoteMutation,
+  usePrefetch,
 } = notesApiSlice;
 
 export const selectNotesResult = notesApiSlice.endpoints.getNotes.select();

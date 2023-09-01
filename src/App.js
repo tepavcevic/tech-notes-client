@@ -18,6 +18,7 @@ import ClientsList from './features/clients/ClientsList';
 import EditClient from './features/clients/EditClient';
 import NewClientForm from './features/clients/NewClientForm';
 import ErrorPage from './components/ErrorPage';
+import Note from './pages/Note';
 
 function App() {
   return (
@@ -36,7 +37,8 @@ function App() {
 
                 <Route path="notes">
                   <Route index element={<NotesList />} />
-                  <Route path=":id" element={<EditNote />} />
+                  <Route path=":id" element={<Note />} />
+                  <Route path="edit/:id" element={<EditNote />} />
                   <Route path="new" element={<NewNote />} />
                 </Route>
 

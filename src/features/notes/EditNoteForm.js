@@ -17,6 +17,8 @@ export default function EditNoteForm({
   users,
   clients,
   hasDeleteCredentials,
+  readOnly,
+  handleToggleEditForm,
 }) {
   useTitle('Edit note');
 
@@ -94,7 +96,19 @@ export default function EditNoteForm({
         handleClose={handleCloseModal}
       />
 
-      <h1 className="mb-5">{`Edit Note #${note?.ticket || 'N/A'}`}</h1>
+      <div className="d-flex justify-content-between align-items-center mb-5">
+        <h1>{`Edit Note #${note?.ticket || 'N/A'}`}</h1>
+        {readOnly !== undefined && (
+          <Button
+            variant="primary"
+            size="sm"
+            className={readOnly ? 'btn-primary' : 'btn-secondary'}
+            onClick={handleToggleEditForm}
+          >
+            {readOnly ? 'Edit' : 'Cancel'}
+          </Button>
+        )}
+      </div>
 
       <Form className="form text-start" onSubmit={handleSubmit(onSubmit)}>
         <Form.Group className="mb-3" controlId="title">
@@ -119,6 +133,7 @@ export default function EditNoteForm({
                 onChange={onChange}
                 ref={ref}
                 autoComplete="off"
+                disabled={readOnly}
               />
             )}
           />
@@ -153,6 +168,7 @@ export default function EditNoteForm({
                 isInvalid={errors.text}
                 placeholder="Enter text"
                 autoComplete="off"
+                disabled={readOnly}
               />
             )}
           />
@@ -176,6 +192,7 @@ export default function EditNoteForm({
                 value={value}
                 onChange={onChange}
                 ref={ref}
+                disabled={readOnly}
               >
                 <option value="">--- Select user ---</option>
 
@@ -210,6 +227,7 @@ export default function EditNoteForm({
                 value={value}
                 onChange={onChange}
                 ref={ref}
+                disabled={readOnly}
               >
                 <option value="">--- Select client ---</option>
 
@@ -245,6 +263,7 @@ export default function EditNoteForm({
                 type="switch"
                 label="Is note completed"
                 className="mb-3"
+                disabled={readOnly}
               />
             )}
           />
@@ -270,7 +289,7 @@ export default function EditNoteForm({
             variant="primary"
             type="submit"
             className="d-flex align-items-center gap-2"
-            disabled={!canSave}
+            disabled={!canSave || readOnly}
           >
             <DocumentPlusIcon height={18} width={18} />
             Submit
@@ -282,6 +301,7 @@ export default function EditNoteForm({
               type="submit"
               className="d-flex align-items-center gap-2"
               onClick={handleShowModal}
+              disabled={readOnly}
             >
               <TrashIcon height={18} width={18} />
               Delete

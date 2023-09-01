@@ -1,15 +1,17 @@
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import useAuth from '../../hooks/useAuth';
-import { useGetNotesQuery } from './notesApiSlice';
-import { useGetUsersQuery } from '../users/usersApiSlice';
-import { useGetClientsQuery } from '../clients/clientsApiSlice';
-import EditNoteForm from './EditNoteForm';
-import BackButton from '../../components/BackButton';
-import FullScreenLoader from '../../components/FullScreenLoader';
+import useAuth from '../hooks/useAuth';
+import { useGetNotesQuery } from '../features/notes/notesApiSlice';
+import { useGetUsersQuery } from '../features/users/usersApiSlice';
+import { useGetClientsQuery } from '../features/clients/clientsApiSlice';
+import EditNoteForm from '../features/notes/EditNoteForm';
+import BackButton from '../components/BackButton';
+import FullScreenLoader from '../components/FullScreenLoader';
 
-export default function EditNote() {
+export default function Note() {
   const { username, isManager, isAdmin } = useAuth();
+  const [readOnly, setReadOnly] = useState(true);
   const { id } = useParams();
   const { note } = useGetNotesQuery('Note', {
     selectFromResult: ({ data }) => ({
@@ -31,6 +33,10 @@ export default function EditNote() {
     }),
   });
 
+  const handleToggleEditForm = () => {
+    setReadOnly((prev) => !prev);
+  };
+
   if (!isManager && !isAdmin) {
     if (note.username !== username) {
       return (
@@ -41,12 +47,14 @@ export default function EditNote() {
   return (
     <>
       <BackButton to="/dash/notes" />
-      {note && users?.length ? (
+      {note && users?.length && clients?.length ? (
         <EditNoteForm
           note={note}
           users={users}
           clients={clients}
           hasDeleteCredentials={isManager || isAdmin}
+          readOnly={readOnly}
+          handleToggleEditForm={handleToggleEditForm}
         />
       ) : (
         <FullScreenLoader />
