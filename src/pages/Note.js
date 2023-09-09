@@ -1,41 +1,26 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import useAuth from '../hooks/useAuth';
-import { useGetNotesQuery } from '../features/notes/notesApiSlice';
-import { useGetUsersQuery } from '../features/users/usersApiSlice';
-import { useGetClientsQuery } from '../features/clients/clientsApiSlice';
-import EditNoteForm from '../features/notes/EditNoteForm';
+import {
+  selectNotesResult,
+  useGetNotesQuery,
+} from '../features/notes/notesApiSlice';
 import BackButton from '../components/BackButton';
 import FullScreenLoader from '../components/FullScreenLoader';
+import NoteDetails from '../features/notes/NoteDetails';
+import { useSelector } from 'react-redux';
 
 export default function Note() {
   const { username, isManager, isAdmin } = useAuth();
-  const [readOnly, setReadOnly] = useState(true);
   const { id } = useParams();
+  const v = useSelector(selectNotesResult);
   const { note } = useGetNotesQuery('Note', {
     selectFromResult: ({ data }) => ({
       note: data?.notes?.find((note) => note?._id === id),
     }),
   });
-  const { users } = useGetUsersQuery('usersList', {
-    selectFromResult: ({ data }) => ({
-      users: data?.ids
-        .map((id) => data?.entities[id])
-        .filter((user) => user?.active),
-    }),
-  });
-  const { clients } = useGetClientsQuery('clientsList', {
-    selectFromResult: ({ data }) => ({
-      clients: data?.ids
-        .map((id) => data?.entities[id])
-        .filter((client) => client?.active),
-    }),
-  });
 
-  const handleToggleEditForm = () => {
-    setReadOnly((prev) => !prev);
-  };
+  console.log(v);
 
   if (!isManager && !isAdmin) {
     if (note.username !== username) {
@@ -47,18 +32,7 @@ export default function Note() {
   return (
     <>
       <BackButton to="/dash/notes" />
-      {note && users?.length && clients?.length ? (
-        <EditNoteForm
-          note={note}
-          users={users}
-          clients={clients}
-          hasDeleteCredentials={isManager || isAdmin}
-          readOnly={readOnly}
-          handleToggleEditForm={handleToggleEditForm}
-        />
-      ) : (
-        <FullScreenLoader />
-      )}
+      {note ? <NoteDetails note={note} /> : <FullScreenLoader />}
     </>
   );
 }
