@@ -1,6 +1,23 @@
-# Getting Started with Create React App
+# Tech Notes frontend App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+# Idea
+
+Main idea is to fetch remote data using RTK Query, with full CRUD operations
+
+# Functionality implemented so far:
+
+- Notes, Users, Clients CRUD
+- Authentication
+- Authorization
+- Displaying Clients position on a map, with user determined pin for coordinates
+- Notes paginated, with filter and sort
+
+# Yet to be implemented
+
+- Users, Clients pagination, sort and filter using query params
+- Fetching Users and Clients when making new note from a search/select in add new note form
 
 ## Available Scripts
 
@@ -13,11 +30,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `npm run build`
 
