@@ -1,10 +1,16 @@
-//note has title, text, user, client, completed, createdAt, updatedAt
+import { useNavigate } from 'react-router-dom';
 
-export default function NoteDetails({ note, handleToggleEditForm }) {
+export default function NoteDetails({ note }) {
+  const navigate = useNavigate();
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <h1>{note?.title || 'Untitled'}</h1>
+      <div
+        className="d-flex justify-content-between align-items-center"
+        onClick={() => navigate(`/dash/notes/edit/${note._id}`)}
+      >
+        <h1>
+          (#{note.ticket}) {note?.title || 'Untitled'}
+        </h1>
         <button className="btn btn-outline btn-sm">Edit</button>
       </div>
       <p>{note?.text}</p>

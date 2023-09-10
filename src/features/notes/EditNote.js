@@ -1,21 +1,17 @@
 import { useParams } from 'react-router-dom';
 
 import useAuth from '../../hooks/useAuth';
-import { useGetNotesQuery } from './notesApiSlice';
 import { useGetUsersQuery } from '../users/usersApiSlice';
 import { useGetClientsQuery } from '../clients/clientsApiSlice';
 import EditNoteForm from './EditNoteForm';
 import BackButton from '../../components/BackButton';
 import FullScreenLoader from '../../components/FullScreenLoader';
+import useNote from './useNote';
 
 export default function EditNote() {
   const { username, isManager, isAdmin } = useAuth();
   const { id } = useParams();
-  const { note } = useGetNotesQuery('Note', {
-    selectFromResult: ({ data }) => ({
-      note: data?.notes?.find((note) => note?._id === id),
-    }),
-  });
+  const { data } = useNote(id);
   const { users } = useGetUsersQuery('usersList', {
     selectFromResult: ({ data }) => ({
       users: data?.ids
@@ -32,7 +28,7 @@ export default function EditNote() {
   });
 
   if (!isManager && !isAdmin) {
-    if (note.username !== username) {
+    if (data.username !== username) {
       return (
         <div className="heading-2 text-danger text-center my-5">No access</div>
       );
@@ -40,10 +36,10 @@ export default function EditNote() {
   }
   return (
     <>
-      <BackButton to="/dash/notes" />
-      {note && users?.length ? (
+      <BackButton to={-1} />
+      {data && users?.length ? (
         <EditNoteForm
-          note={note}
+          note={data}
           users={users}
           clients={clients}
           hasDeleteCredentials={isManager || isAdmin}

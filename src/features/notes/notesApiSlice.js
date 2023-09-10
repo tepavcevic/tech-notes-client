@@ -37,6 +37,17 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         return [{ type: 'Note', id: 'LIST' }];
       },
     }),
+    getNoteById: builder.query({
+      query: (id) => ({
+        url: `/notes/${id}`,
+        validateStatus: (response, result) => {
+          return response.status === 200 && !result.isError;
+        },
+      }),
+      providesTags: (result, error, arg) => {
+        return [{ type: 'Note', id: arg.id }];
+      },
+    }),
     addNewNote: builder.mutation({
       query: (noteData) => ({
         url: '/notes',
@@ -66,6 +77,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetNotesQuery,
+  useGetNoteByIdQuery,
   useAddNewNoteMutation,
   useUpdateNoteMutation,
   useDeleteNoteMutation,
