@@ -18,6 +18,7 @@ Main idea is to fetch remote data using RTK Query, with full CRUD operations
 
 - Users, Clients pagination, sort and filter using query params
 - Fetching Users and Clients when making new note from a search/select in add new note form
+- Nicer way of displaying notes via it's own page
 
 ## Available Scripts
 
