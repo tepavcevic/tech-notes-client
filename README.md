@@ -1,6 +1,6 @@
 # Tech Notes frontend App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Project is abandoned for the foreseeable future :') 
 
 # Idea
 
